@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.provismet.cursedspawners.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MobSpawnerBlockEntityMixin",
+    "MobSpawnerLogicMixin",
+    "PlayerManagerMixin",
+    "ServerPlayerInteractionManagerMixin",
+    "SpawnerBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "gamerule.category.cursed-spawners": "Cursed Spawners",
+  "gamerule.spawnerMimicChance": "Spawner Mimic Chance",
+  "gamerule.spawnerMimicChance.description": "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable."
+}

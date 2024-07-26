@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "cursed-spawners",
+	"version": "${version}",
+	"name": "Cursed Spawners",
+	"description": "Modifies spawners to introduce more challenge than necessary.",
+	"authors": [
+		"Provismet"
+	],
+	"contact": {
+		"homepage": "https://github.com/Provismet/Cursed-Spawners",
+		"sources": "https://github.com/Provismet/Cursed-Spawners"
+	},
+	"license": "Lily License",
+	"icon": "assets/cursed-spawners/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.provismet.cursedspawners.CursedSpawnersMain"
+		],
+		"client": [
+			"com.provismet.cursedspawners.CursedSpawnersClient"
+		],
+		"fabric-datagen": [
+          "com.provismet.cursedspawners.datagen.CursedSpawnersDataGenerator"
+		]
+	},
+	"mixins": [
+		"cursed-spawners.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
