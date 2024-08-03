@@ -1,5 +1,6 @@
 package com.provismet.cursedspawners.datagen;
 
+import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
@@ -17,5 +18,7 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add("gamerule.category.cursed-spawners", "Cursed Spawners");
         translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey(), "Spawner Mimic Chance");
         translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey() + ".description", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
+
+        translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
     }
 }

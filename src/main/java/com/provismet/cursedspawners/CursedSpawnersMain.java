@@ -1,6 +1,8 @@
 package com.provismet.cursedspawners;
 
 import com.provismet.cursedspawners.networking.GameRulePayloadS2C;
+import com.provismet.cursedspawners.registries.CSEntityTypes;
+import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.api.ModInitializer;
@@ -21,6 +23,8 @@ public class CursedSpawnersMain implements ModInitializer {
 	@Override
 	public void onInitialize () {
 		CSGamerules.init();
+		CSItems.init();
+		CSEntityTypes.register();
 		CSParticleTypes.register();
 
 		PayloadTypeRegistry.playS2C().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);

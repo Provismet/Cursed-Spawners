@@ -8,5 +8,6 @@ public class CursedSpawnersDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator (FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(LanguageGenerator::new);
+		pack.addProvider(ModelGenerator::new);
 	}
 }

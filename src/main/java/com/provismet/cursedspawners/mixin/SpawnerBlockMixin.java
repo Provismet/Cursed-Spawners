@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
-import com.provismet.cursedspawners.CursedSpawnersMain;
+import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
 import com.provismet.cursedspawners.utility.CSGamerules;
@@ -9,10 +9,14 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+
+import java.util.UUID;
 
 @Mixin(SpawnerBlock.class)
 public abstract class SpawnerBlockMixin extends BlockWithEntity {
@@ -32,8 +36,14 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
             else blockMimicChance = ((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$getMimicChance();
 
             if (world.getRandom().nextDouble() <= blockMimicChance) {
-                // TODO: Spawn Mimic
-                CursedSpawnersMain.LOGGER.info("Mimic should spawn.");
+                NbtCompound nbt = blockEntity.createNbtWithIdentifyingData(world.getRegistryManager());
+                SpawnerMimicEntity mimic = new SpawnerMimicEntity(world);
+                UUID uuid = mimic.getUuid();
+                mimic.readNbt(nbt);
+                mimic.setUuid(uuid);
+                mimic.refreshPositionAndAngles(pos, 0, 0);
+                mimic.setAttacker(player);
+                world.spawnEntity(mimic);
             }
         }
 
