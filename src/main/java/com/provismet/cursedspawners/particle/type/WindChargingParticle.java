@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class WindChargingParticle extends FlatParticle {
     private float prevScale;
-    private float maxScale;
+    private final float maxScale;
 
     protected WindChargingParticle (ClientWorld clientWorld, double x, double y, double z, SpriteProvider spriteProvider, WindChargingParticleEffect effect) {
         super(clientWorld, x, y, z, spriteProvider);
