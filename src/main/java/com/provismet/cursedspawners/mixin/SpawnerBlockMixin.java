@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,8 +47,16 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
                 world.spawnEntity(mimic);
             }
         }
-
         return state;
+    }
+
+    @Override
+    protected void onStateReplaced (BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        // This executes after the mimic is spawned.
+        if (world.getNonSpectatingEntities(SpawnerMimicEntity.class, Box.of(pos.toCenterPos(), 0.1, 0.1, 0.1)).isEmpty())
+            ItemScatterer.onStateReplaced(state, newState, world, pos);
+
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override
