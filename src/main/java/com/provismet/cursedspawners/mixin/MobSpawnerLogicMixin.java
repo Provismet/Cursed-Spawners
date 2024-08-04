@@ -1,5 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
+import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
 import com.provismet.cursedspawners.particle.effect.WindChargingParticleEffect;
 import net.minecraft.block.spawner.MobSpawnerLogic;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -20,23 +21,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(MobSpawnerLogic.class)
-public abstract class MobSpawnerLogicMixin {
+public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
     @Unique private static final String CAN_KNOCKBACK = "CanKnockback";
     @Unique private static final String MAX_KNOCKBACK_TIMER = "MaxKnockbackTimer";
     @Unique private static final String KNOCKBACK_STRENGTH = "KnockbackStrength";
     @Unique private static final String KNOCKBACK_RADIUS = "KnockbackRadius";
 
-    @Unique private boolean hasAssignedNbt = false;
-    @Unique private boolean canKnockback;
+    @Unique private boolean canKnockback = false;
     @Unique private int knockbackTimer = 1;
-    @Unique private int maxKnockbackTimer;
-    @Unique private double knockbackStrength;
-    @Unique private double knockbackRadius;
+    @Unique private int maxKnockbackTimer = 200;
+    @Unique private double knockbackStrength = 0.2;
+    @Unique private double knockbackRadius = 4;
 
     @Inject(method="readNbt", at=@At("TAIL"))
     private void readExtendedNbt (World world, BlockPos pos, NbtCompound nbt, CallbackInfo info) {
-        this.hasAssignedNbt = true;
-
         if (nbt.contains(CAN_KNOCKBACK)) this.canKnockback = nbt.getBoolean(CAN_KNOCKBACK);
         else this.canKnockback = false;
 
@@ -44,7 +42,7 @@ public abstract class MobSpawnerLogicMixin {
         else this.maxKnockbackTimer = 200;
 
         if (nbt.contains(KNOCKBACK_STRENGTH)) this.knockbackStrength = nbt.getDouble(KNOCKBACK_STRENGTH);
-        else this.knockbackStrength = 0.2f;
+        else this.knockbackStrength = 0.2;
 
         if (nbt.contains(KNOCKBACK_RADIUS)) this.knockbackRadius = nbt.getDouble(KNOCKBACK_RADIUS);
         else this.knockbackRadius = 4;
@@ -52,8 +50,6 @@ public abstract class MobSpawnerLogicMixin {
 
     @Inject(method="writeNbt", at=@At("TAIL"))
     private void writeExtendedNbt (NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-        if (!this.hasAssignedNbt) return;
-
         nbt.putBoolean(CAN_KNOCKBACK, this.canKnockback);
         nbt.putInt(MAX_KNOCKBACK_TIMER, this.maxKnockbackTimer);
         nbt.putDouble(KNOCKBACK_STRENGTH, this.knockbackStrength);
@@ -88,5 +84,22 @@ public abstract class MobSpawnerLogicMixin {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean cursed_spawners$getCanKnockback () {
+        return this.canKnockback;
+    }
+
+    @Override
+    public void cursed_spawners$setCanKnockback (boolean value) {
+        this.canKnockback = value;
+    }
+
+    @Override
+    public void cursed_spawners$setKnockbackParams (int interval, double strength, double radius) {
+        this.maxKnockbackTimer = interval;
+        this.knockbackStrength = strength;
+        this.knockbackRadius = radius;
     }
 }

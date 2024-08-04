@@ -20,6 +20,7 @@ public abstract class CSGamerules {
             ServerPlayNetworking.send(player, new GameRulePayloadS2C((float)rule.get()));
         }
     }));
+    public static final GameRules.Key<DoubleRule> SPAWNER_ACTION_CHANCE = GameRuleRegistry.register("spawnerActionChance", SPAWNER_CATEGORY, GameRuleFactory.createDoubleRule(0.25, 0, 1));
 
     public static void init () {}
 }

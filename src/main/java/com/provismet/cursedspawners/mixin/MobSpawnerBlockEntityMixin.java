@@ -1,24 +1,21 @@
 package com.provismet.cursedspawners.mixin;
 
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
+import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
+import com.provismet.cursedspawners.utility.CSGamerules;
+import com.provismet.cursedspawners.utility.SpawnerBreakEffects;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
+import net.minecraft.block.spawner.MobSpawnerLogic;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerLootComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.SilverfishEntity;
-import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.LootableInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -27,13 +24,16 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -45,12 +45,11 @@ import java.util.Objects;
 
 @Mixin(MobSpawnerBlockEntity.class)
 public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements IMixinMobSpawnerBlockEntity, LootableInventory {
+    @Shadow @Final private MobSpawnerLogic logic;
+
     @Unique private static final String REFORGE_ACTIONS = "ReforgeActions";
     @Unique private static final String BREAK_ACTION = "BreakAction";
-    @Unique private static final String NORMAL_BREAK = "normal";
-    @Unique private static final String SUMMON_VEX = "vex";
-    @Unique private static final String SUMMON_SILVERFISH = "silverfish";
-    @Unique private static final String CURSE = "curse";
+    @Unique private static final String RANDOMISE = "ShouldGenerateEffects";
 
     @Unique private static final String MIMIC_CHANCE = "MimicChance";
     @Unique private static final double PASSTHROUGH_MIMIC_CHANCE = -1;
@@ -65,22 +64,24 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
     @Unique private RegistryKey<LootTable> lootTable = null;
     @Unique private double mimicChance = PASSTHROUGH_MIMIC_CHANCE;
     @Unique private List<String> reforgeActions = new ArrayList<>();
-    @Unique private String breakAction = NORMAL_BREAK;
+    @Unique private String breakAction = SpawnerBreakEffects.NORMAL_BREAK;
 
-    // TODO: How to randomise these specifically for world gen?
+    @Unique private boolean shouldRandomiseEffects = true;
+
     @Inject(method="readNbt", at=@At("TAIL"))
     private void readExtendedNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
         if (nbt.contains(MIMIC_CHANCE, NbtElement.DOUBLE_TYPE)) this.mimicChance = nbt.getDouble(MIMIC_CHANCE);
         else this.mimicChance = PASSTHROUGH_MIMIC_CHANCE;
 
+        if (nbt.contains(RANDOMISE)) this.shouldRandomiseEffects = nbt.getBoolean(RANDOMISE);
+
         if (nbt.contains(REFORGE_ACTIONS, NbtElement.LIST_TYPE)) {
             reforgeActions = new ArrayList<>();
             reforgeActions.addAll(nbt.getList(REFORGE_ACTIONS, NbtElement.STRING_TYPE).stream().map(NbtElement::asString).toList());
-        }
-        else this.reforgeActions = new ArrayList<>();
+        } else this.reforgeActions = new ArrayList<>();
 
         if (nbt.contains(BREAK_ACTION, NbtElement.STRING_TYPE)) this.breakAction = nbt.getString(BREAK_ACTION);
-        else this.breakAction = NORMAL_BREAK;
+        else this.breakAction = SpawnerBreakEffects.NORMAL_BREAK;
 
         this.readLootTable(nbt);
     }
@@ -95,6 +96,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
         }
         nbt.put(REFORGE_ACTIONS, actions);
         nbt.putString(BREAK_ACTION, this.breakAction);
+        nbt.putBoolean(RANDOMISE, this.shouldRandomiseEffects);
 
         this.writeLootTable(nbt);
     }
@@ -109,46 +111,68 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
         return this.mimicChance == PASSTHROUGH_MIMIC_CHANCE;
     }
 
+    @Inject(method="serverTick", at=@At("HEAD"))
+    private static void tick (World world, BlockPos pos, BlockState state, MobSpawnerBlockEntity blockEntity, CallbackInfo info) {
+        MobSpawnerBlockEntityMixin self = (MobSpawnerBlockEntityMixin)(Object)blockEntity;
+        if (self.shouldRandomiseEffects && self.hasWorld()) {
+            self.generateEffects(world);
+            self.markDirty();
+        }
+    }
+
     @Unique
-    private void performBreakAction (String actionType, ServerWorld world) {
-        Vec3d centrePos = this.getPos().toCenterPos();
-        if (Objects.equals(actionType, SUMMON_VEX)) {
-            for (int i = 0; i < 3; ++i) {
-                VexEntity vex = new VexEntity(EntityType.VEX, world);
-                vex.refreshPositionAndAngles(centrePos.getX(), centrePos.getY() + 1, centrePos.getZ(), 0f, 0f);
-                vex.equipStack(EquipmentSlot.MAINHAND, Items.STONE_SWORD.getDefaultStack());
-                world.spawnNewEntityAndPassengers(vex);
+    private void generateEffects (World world) {
+        this.shouldRandomiseEffects = false;
+        Random random = world.getRandom();
+
+        int dangerLevel = 0;
+        double chanceToAddAction = world.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get();
+        while (dangerLevel < 7) {
+            if (random.nextDouble() < chanceToAddAction) ++dangerLevel;
+            else break;
+        }
+
+        for (int i = 0; i < dangerLevel; ++i) {
+            IMixinMobSpawnerLogic mixinLogic = (IMixinMobSpawnerLogic)this.logic;
+            if (mixinLogic.cursed_spawners$getCanKnockback() || random.nextBoolean()) {
+                if (Objects.equals(this.breakAction, SpawnerBreakEffects.NORMAL_BREAK)) {
+                    this.breakAction = SpawnerBreakEffects.getRandomEffectKey(random);
+                }
+                else {
+                    this.reforgeActions.add(SpawnerBreakEffects.getRandomEffectKey(random));
+                }
+            }
+            else {
+                mixinLogic.cursed_spawners$setCanKnockback(true);
+                mixinLogic.cursed_spawners$setKnockbackParams(
+                    random.nextBetween(100, 240),
+                    random.nextTriangular(0.4, 0.2),
+                    random.nextTriangular(5, 2)
+                );
             }
         }
-        else if (Objects.equals(actionType, SUMMON_SILVERFISH)) {
-            for (int i = 0; i < 5; ++i) {
-                SilverfishEntity silverfish = new SilverfishEntity(EntityType.SILVERFISH, world);
-                silverfish.refreshPositionAndAngles(centrePos.getX(), centrePos.getY() + 1, centrePos.getZ(), 0f, 0f);
-                world.spawnNewEntityAndPassengers(silverfish);
-            }
-        }
-        else if (Objects.equals(actionType, CURSE)) {
-            List<ServerPlayerEntity> playersInRange = world.getPlayers(player -> player.getPos().isWithinRangeOf(this.getPos().toCenterPos(), 8, 8) && !player.isCreative() && !player.isSpectator());
-            for (ServerPlayerEntity player : playersInRange) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60));
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 2));
-            }
-        }
+
+        // TODO: Add loot based on danger.
     }
 
     @Override
     public boolean cursed_spawners$attemptBreak () {
         if (!(this.world instanceof ServerWorld serverWorld)) return true;
         if (this.reforgeActions.isEmpty()) {
-            this.performBreakAction(this.breakAction, serverWorld);
+            SpawnerBreakEffects.getEffect(this.breakAction).accept((MobSpawnerBlockEntity)(Object)this, serverWorld);
             return true;
         }
 
         String nextAction = this.reforgeActions.removeFirst();
         Vec3d centrePos = this.getPos().toCenterPos();
         serverWorld.spawnParticles(ParticleTypes.POOF, centrePos.getX(), centrePos.getY(), centrePos.getZ(), 20, 0.5, 0.5, 0.5, 0);
-        this.performBreakAction(nextAction, serverWorld);
+        SpawnerBreakEffects.getEffect(nextAction).accept((MobSpawnerBlockEntity)(Object)this, serverWorld);
         return false;
+    }
+
+    @Override
+    public void cursed_spawners$setShouldGenerateEffects (boolean value) {
+        this.shouldRandomiseEffects = value;
     }
 
     @Nullable

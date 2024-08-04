@@ -8,13 +8,16 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.UUID;
@@ -23,6 +26,14 @@ import java.util.UUID;
 public abstract class SpawnerBlockMixin extends BlockWithEntity {
     protected SpawnerBlockMixin (Settings settings) {
         super(settings);
+    }
+
+    @Override
+    public void onPlaced (World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        if (world.getBlockEntity(pos) instanceof MobSpawnerBlockEntity blockEntity) {
+            //((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$setShouldGenerateEffects(false);
+        }
     }
 
     @Override

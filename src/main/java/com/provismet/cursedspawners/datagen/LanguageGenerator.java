@@ -18,6 +18,8 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add("gamerule.category.cursed-spawners", "Cursed Spawners");
         translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey(), "Spawner Mimic Chance");
         translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey() + ".description", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
+        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey(), "Spawner Bonus Action Chance");
+        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey() + ".description", "The probability of a spawner having an addition effect. Effects can stack.");
 
         translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
     }
