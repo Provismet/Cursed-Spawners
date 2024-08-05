@@ -135,6 +135,8 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
 
         for (int i = 0; i < dangerLevel; ++i) {
             IMixinMobSpawnerLogic mixinLogic = (IMixinMobSpawnerLogic)this.logic;
+
+            // TODO: Randomly add boost and heal.
             if (mixinLogic.cursed_spawners$getCanKnockback() || random.nextBoolean()) {
                 if (Objects.equals(this.breakAction, SpawnerBreakEffects.NORMAL_BREAK)) {
                     this.breakAction = SpawnerBreakEffects.getRandomEffectKey(random);
@@ -147,7 +149,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
                 mixinLogic.cursed_spawners$setCanKnockback(true);
                 mixinLogic.cursed_spawners$setKnockbackParams(
                     random.nextBetween(100, 240),
-                    random.nextTriangular(0.4, 0.2),
+                    random.nextTriangular(0.8, 0.4),
                     random.nextTriangular(5, 2)
                 );
             }
