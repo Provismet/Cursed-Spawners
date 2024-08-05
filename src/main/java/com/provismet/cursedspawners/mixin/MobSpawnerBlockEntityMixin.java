@@ -17,6 +17,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.LootableInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -152,7 +153,11 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
             }
         }
 
-        // TODO: Add loot based on danger.
+        if (dangerLevel > 0 && this.lootTable == null) {
+            if (dangerLevel < 3) this.lootTable = LootTables.JUNGLE_TEMPLE_CHEST;
+            else if (dangerLevel < 6) this.lootTable = LootTables.SIMPLE_DUNGEON_CHEST;
+            else this.lootTable = LootTables.WOODLAND_MANSION_CHEST;
+        }
     }
 
     @Override
