@@ -30,6 +30,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
@@ -106,6 +107,12 @@ public class SpawnerMimicEntity extends HostileEntity {
         super.initDataTracker(builder);
         builder.add(RUNNING_SPAWN_ANIMATION, false);
         builder.add(RENDERED_ENTITY, new NbtCompound());
+    }
+
+    @Override
+    public void onSpawnPacket (EntitySpawnS2CPacket packet) {
+        super.onSpawnPacket(packet);
+        this.spawnState.start(this.age);
     }
 
     @Override
@@ -198,7 +205,7 @@ public class SpawnerMimicEntity extends HostileEntity {
         if (!this.isNavigating()) this.idleState.startIfNotRunning(this.age);
         else this.idleState.stop();
 
-        if (this.isRunningSpawnAnimation() && !this.spawnState.isRunning()) this.spawnState.startIfNotRunning(this.age);
+        if (this.isRunningSpawnAnimation()) this.spawnState.startIfNotRunning(this.age);
 
         if (!this.isAttacking()) this.attackState.stop();
     }
