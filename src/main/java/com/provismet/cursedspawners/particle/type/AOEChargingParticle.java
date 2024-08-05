@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.particle.type;
 
-import com.provismet.cursedspawners.particle.effect.WindChargingParticleEffect;
+import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
 import com.provismet.lilylib.particle.FlatParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -9,17 +9,20 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-public class WindChargingParticle extends FlatParticle {
+public class AOEChargingParticle extends FlatParticle {
     private float prevScale;
     private final float maxScale;
 
-    protected WindChargingParticle (ClientWorld clientWorld, double x, double y, double z, SpriteProvider spriteProvider, WindChargingParticleEffect effect) {
+    protected AOEChargingParticle (ClientWorld clientWorld, double x, double y, double z, SpriteProvider spriteProvider, AOEChargingParticleEffect effect) {
         super(clientWorld, x, y, z, spriteProvider);
         this.scale = 3f;
         this.maxScale = this.scale;
         this.prevScale = this.scale;
         this.maxAge = effect.maxAge();
         this.alpha = 0;
+        this.red = effect.colour().x();
+        this.green = effect.colour().y();
+        this.blue = effect.colour().z();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class WindChargingParticle extends FlatParticle {
         return MathHelper.lerp(tickDelta, this.prevScale, this.scale);
     }
 
-    public static class Factory implements ParticleFactory<WindChargingParticleEffect> {
+    public static class Factory implements ParticleFactory<AOEChargingParticleEffect> {
         private final SpriteProvider spriteProvider;
 
         public Factory (SpriteProvider spriteProvider) {
@@ -46,8 +49,8 @@ public class WindChargingParticle extends FlatParticle {
 
         @Nullable
         @Override
-        public Particle createParticle (WindChargingParticleEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-            return new WindChargingParticle(world, x, y, z, this.spriteProvider, parameters);
+        public Particle createParticle (AOEChargingParticleEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+            return new AOEChargingParticle(world, x, y, z, this.spriteProvider, parameters);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.provismet.cursedspawners.registries.client;
 
-import com.provismet.cursedspawners.particle.type.WindChargingParticle;
+import com.provismet.cursedspawners.particle.type.AOEChargingParticle;
+import com.provismet.cursedspawners.particle.type.BoostParticle;
+import com.provismet.cursedspawners.particle.type.HealParticle;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,6 +17,8 @@ public abstract class CSParticleFactories {
     }
 
     public static void register () {
-        register(CSParticleTypes.WIND_CHARGING_INDICATOR, WindChargingParticle.Factory::new);
+        register(CSParticleTypes.AOE_CHARGING_INDICATOR, AOEChargingParticle.Factory::new);
+        register(CSParticleTypes.HEAL, HealParticle.Factory::new);
+        register(CSParticleTypes.BOOST, BoostParticle.Factory::new);
     }
 }
