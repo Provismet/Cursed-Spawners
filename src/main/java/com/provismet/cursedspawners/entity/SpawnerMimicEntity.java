@@ -2,6 +2,8 @@ package com.provismet.cursedspawners.entity;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSEntityTypes;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.spawner.MobSpawnerEntry;
 import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.Entity;
@@ -36,6 +38,7 @@ import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -217,6 +220,13 @@ public class SpawnerMimicEntity extends HostileEntity {
     @Override
     public boolean isCollidable () {
         return true;
+    }
+
+    @Override
+    public void slowMovement (BlockState state, Vec3d multiplier) {
+        if (!state.isOf(Blocks.COBWEB)) {
+            super.slowMovement(state, multiplier);
+        }
     }
 
     protected void spawn (ServerWorld serverWorld) {
