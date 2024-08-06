@@ -1,5 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
+import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.networking.GameRulePayloadS2C;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -29,5 +30,10 @@ public abstract class PlayerManagerMixin {
     )
     private void sendJoinPacket (ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         ServerPlayNetworking.send(player, new GameRulePayloadS2C((float)this.server.getOverworld().getGameRules().get(CSGamerules.BREAK_SPEED).get()));
+    }
+
+    @Inject(method="remove", at=@At("HEAD"))
+    private void sendLeavePacket (ServerPlayerEntity player, CallbackInfo info) {
+        ServerPlayNetworking.send(player, new GameRulePayloadS2C(1f));
     }
 }
