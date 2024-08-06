@@ -4,6 +4,7 @@ import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import com.provismet.cursedspawners.utility.SpawnerBreakEffects;
+import com.provismet.cursedspawners.utility.SpawnerEffects;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -136,21 +137,37 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
         for (int i = 0; i < dangerLevel; ++i) {
             IMixinMobSpawnerLogic mixinLogic = (IMixinMobSpawnerLogic)this.logic;
 
-            // TODO: Randomly add boost and heal.
-            if (mixinLogic.cursed_spawners$getCanKnockback() || random.nextBoolean()) {
-                if (Objects.equals(this.breakAction, SpawnerBreakEffects.NORMAL_BREAK)) {
-                    this.breakAction = SpawnerBreakEffects.getRandomEffectKey(random);
-                }
-                else {
-                    this.reforgeActions.add(SpawnerBreakEffects.getRandomEffectKey(random));
-                }
-            }
-            else {
+            List<SpawnerEffects> possibleEffects = new ArrayList<>();
+            possibleEffects.add(SpawnerEffects.REFORGE);
+            if (Objects.equals(this.breakAction, SpawnerBreakEffects.NORMAL_BREAK)) possibleEffects.add(SpawnerEffects.BREAK);
+            if (!mixinLogic.cursed_spawners$getCanKnockback()) possibleEffects.add(SpawnerEffects.KNOCKBACK);
+            if (!mixinLogic.cursed_spawners$getCanHeal()) possibleEffects.add(SpawnerEffects.HEAL);
+            if (!mixinLogic.cursed_spawners$getCanBoost()) possibleEffects.add(SpawnerEffects.BOOST);
+
+            SpawnerEffects chosen = possibleEffects.get(random.nextInt(possibleEffects.size()));
+            if (chosen == SpawnerEffects.BREAK) SpawnerBreakEffects.getRandomEffectKey(random);
+            else if (chosen == SpawnerEffects.REFORGE) this.reforgeActions.add(SpawnerBreakEffects.getRandomEffectKey(random));
+            else if (chosen == SpawnerEffects.KNOCKBACK) {
                 mixinLogic.cursed_spawners$setCanKnockback(true);
                 mixinLogic.cursed_spawners$setKnockbackParams(
-                    random.nextBetween(100, 240),
-                    random.nextTriangular(0.8, 0.4),
-                    random.nextTriangular(5, 2)
+                    random.nextBetween(100, 160),
+                    random.nextTriangular(1.5, 0.5),
+                    random.nextTriangular(5, 0.75)
+                );
+            }
+            else if (chosen == SpawnerEffects.HEAL) {
+                mixinLogic.cursed_spawners$setCanHeal(true);
+                mixinLogic.cursed_spawners$setHealParams(
+                    random.nextBetween(80, 160),
+                    2f,
+                    random.nextTriangular(5, 1)
+                );
+            }
+            else if (chosen == SpawnerEffects.BOOST) {
+                mixinLogic.cursed_spawners$setCanBoost(true);
+                mixinLogic.cursed_spawners$setBoostParams(
+                    random.nextBetween(120, 200),
+                    random.nextTriangular(8, 4)
                 );
             }
         }
