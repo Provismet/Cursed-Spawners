@@ -51,6 +51,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.function.Function;
 
+// TODO: Add sound effects
 public class SpawnerMimicEntity extends HostileEntity {
     private int spawnDelay = 20;
     private DataPool<MobSpawnerEntry> spawnPotentials = DataPool.<MobSpawnerEntry>empty();
@@ -82,7 +83,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     public static DefaultAttributeContainer.Builder getSpawnerMimicAttributes () {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 15)
+            .add(EntityAttributes.GENERIC_MAX_HEALTH, 10)
             .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 2)
             .add(EntityAttributes.GENERIC_ARMOR, 30)
             .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.23)
@@ -226,7 +227,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     @Override
     public boolean isCollidable () {
-        return true;
+        return this.isAlive();
     }
 
     @Override
