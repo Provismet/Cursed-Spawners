@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class CursedSpawnersMain implements ModInitializer {
 	public static final String MODID = "cursed-spawners";
-    public static final Logger LOGGER = LoggerFactory.getLogger("Curse Spawners");
+    public static final Logger LOGGER = LoggerFactory.getLogger("Cursed Spawners");
 
 	public static Identifier identifier (String path) {
 		return Identifier.of(MODID, path);
