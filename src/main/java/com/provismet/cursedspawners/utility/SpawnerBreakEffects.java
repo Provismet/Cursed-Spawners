@@ -61,7 +61,7 @@ public abstract class SpawnerBreakEffects {
 
     public static String getRandomEffectKey (Random random) {
         List<String> keys = EFFECTS.keySet().stream().toList();
-        return keys.get(random.nextBetween(0, keys.size() - 1));
+        return keys.get(random.nextInt(keys.size()));
     }
 
     @FunctionalInterface
