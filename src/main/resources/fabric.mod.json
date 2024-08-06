@@ -22,7 +22,7 @@
 			"com.provismet.cursedspawners.CursedSpawnersClient"
 		],
 		"fabric-datagen": [
-          "com.provismet.cursedspawners.datagen.CursedSpawnersDataGenerator"
+          "com.provismet.datagen.cursedspawners.CursedSpawnersDataGenerator"
 		]
 	},
 	"mixins": [

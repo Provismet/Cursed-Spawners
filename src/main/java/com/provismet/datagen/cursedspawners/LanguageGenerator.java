@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.datagen;
+package com.provismet.datagen.cursedspawners;
 
 import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.utility.CSGamerules;

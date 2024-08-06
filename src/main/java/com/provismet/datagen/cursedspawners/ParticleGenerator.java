@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.datagen;
+package com.provismet.datagen.cursedspawners;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSParticleTypes;

@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.datagen;
+package com.provismet.datagen.cursedspawners;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
