@@ -10,12 +10,18 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
 
@@ -62,5 +68,11 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
         else scale *= (float)player.getWorld().getGameRules().get(CSGamerules.BREAK_SPEED).get();
 
         return scale;
+    }
+
+    @Inject(method="onStacksDropped", at=@At("HEAD"), cancellable=true)
+    private void preventExp (BlockState state, ServerWorld world, BlockPos pos, ItemStack tool, boolean dropExperience, CallbackInfo info) {
+        if (!world.getEntitiesByClass(SpawnerMimicEntity.class, Box.of(pos.toCenterPos(), 0.1, 0.1, 0.1), entity -> true).isEmpty())
+            info.cancel();
     }
 }
