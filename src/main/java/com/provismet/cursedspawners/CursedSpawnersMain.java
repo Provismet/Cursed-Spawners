@@ -2,6 +2,7 @@ package com.provismet.cursedspawners;
 
 import com.provismet.cursedspawners.networking.GameRulePayloadS2C;
 import com.provismet.cursedspawners.registries.CSEntityTypes;
+import com.provismet.cursedspawners.registries.CSItemGroups;
 import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import com.provismet.cursedspawners.utility.CSGamerules;
@@ -26,6 +27,7 @@ public class CursedSpawnersMain implements ModInitializer {
 		CSItems.init();
 		CSEntityTypes.register();
 		CSParticleTypes.register();
+		CSItemGroups.register();
 
 		PayloadTypeRegistry.playS2C().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);
 	}
