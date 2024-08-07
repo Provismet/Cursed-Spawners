@@ -31,7 +31,7 @@ public class SpawnerMimicEntityRenderer extends MobEntityRenderer<SpawnerMimicEn
         Entity innerEntity = mimic.getRenderedEntity();
         if (innerEntity != null) {
             matrixStack.push();
-            matrixStack.translate(0f, 0.1875f, 0f);
+            matrixStack.translate(0f, 0.25f, 0f);
             float f = 0.53125f;
             float g = Math.max(innerEntity.getWidth(), innerEntity.getHeight());
             if ((double)g > 1.0) {
