@@ -16,10 +16,12 @@ public class LanguageGenerator extends FabricLanguageProvider {
     @Override
     public void generateTranslations (RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add("gamerule.category.cursed-spawners", "Cursed Spawners");
-        translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey(), "Spawner Mimic Chance");
+        translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey(), "Mimic Chance");
         translationBuilder.add(CSGamerules.MIMIC_CHANCE.getTranslationKey() + ".description", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
-        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey(), "Spawner Bonus Action Chance");
-        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey() + ".description", "The probability of a spawner having an addition effect. Effects can stack.");
+        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey(), "Bonus Action Chance");
+        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey() + ".description", "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.");
+        translationBuilder.add(CSGamerules.BREAK_SPEED.getTranslationKey(), "Mining Speed Modifier");
+        translationBuilder.add(CSGamerules.BREAK_SPEED.getTranslationKey() + ".description", "Mining speed for spawners is multiplied by this value.");
 
         translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
     }
