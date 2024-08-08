@@ -145,7 +145,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
             if (!mixinLogic.cursed_spawners$getCanBoost()) possibleEffects.add(SpawnerEffects.BOOST);
 
             SpawnerEffects chosen = possibleEffects.get(random.nextInt(possibleEffects.size()));
-            if (chosen == SpawnerEffects.BREAK) SpawnerBreakEffects.getRandomEffectKey(random);
+            if (chosen == SpawnerEffects.BREAK) this.breakAction = SpawnerBreakEffects.getRandomEffectKey(random);
             else if (chosen == SpawnerEffects.REFORGE) this.reforgeActions.add(SpawnerBreakEffects.getRandomEffectKey(random));
             else if (chosen == SpawnerEffects.KNOCKBACK) {
                 mixinLogic.cursed_spawners$setCanKnockback(true);
