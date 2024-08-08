@@ -38,8 +38,8 @@ public class LootTableGenerator extends SimpleFabricLootTableProvider {
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(
                             ItemEntry.builder(Items.EXPERIENCE_BOTTLE)
-                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 2)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(lookup, UniformLootNumberProvider.create(0, 1)))
+                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(0)))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(lookup, UniformLootNumberProvider.create(0, 3)))
                         )
                 )
                 .pool(
@@ -47,7 +47,7 @@ public class LootTableGenerator extends SimpleFabricLootTableProvider {
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(
                             ItemEntry.builder(Items.IRON_BARS)
-                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 2)))
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 2)))
                         )
                 )
         );
