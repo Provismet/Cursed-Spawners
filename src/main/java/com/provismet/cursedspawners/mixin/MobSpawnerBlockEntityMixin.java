@@ -116,7 +116,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
     @Inject(method="serverTick", at=@At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState state, MobSpawnerBlockEntity blockEntity, CallbackInfo info) {
         MobSpawnerBlockEntityMixin self = (MobSpawnerBlockEntityMixin)(Object)blockEntity;
-        if (self.shouldRandomiseEffects && self.hasWorld()) {
+        if (self.shouldRandomiseEffects && self.hasWorld() && world.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get() > 0) {
             self.generateEffects(world);
             self.markDirty();
         }
