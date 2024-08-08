@@ -79,6 +79,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     public SpawnerMimicEntity (EntityType<? extends SpawnerMimicEntity> entityType, World world) {
         super(entityType, world);
+        this.experiencePoints = 30;
     }
 
     public static DefaultAttributeContainer.Builder getSpawnerMimicAttributes () {
