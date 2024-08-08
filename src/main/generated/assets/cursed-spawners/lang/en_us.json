@@ -1,8 +1,10 @@
 {
   "gamerule.category.cursed-spawners": "Cursed Spawners",
-  "gamerule.spawnerActionChance": "Spawner Bonus Action Chance",
-  "gamerule.spawnerActionChance.description": "The probability of a spawner having an addition effect. Effects can stack.",
-  "gamerule.spawnerMimicChance": "Spawner Mimic Chance",
+  "gamerule.spawnerActionChance": "Bonus Action Chance",
+  "gamerule.spawnerActionChance.description": "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.",
+  "gamerule.spawnerMimicChance": "Mimic Chance",
   "gamerule.spawnerMimicChance.description": "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.",
+  "gamerule.spawnerMiningSpeedModifier": "Mining Speed Modifier",
+  "gamerule.spawnerMiningSpeedModifier.description": "Mining speed for spawners is multiplied by this value.",
   "item.cursed-spawners.mimic_spawn_egg": "Spawner Mimic Spawn Egg"
 }
