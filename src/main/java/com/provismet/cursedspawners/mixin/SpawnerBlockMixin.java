@@ -12,6 +12,7 @@ import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
@@ -43,9 +44,14 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
             else blockMimicChance = ((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$getMimicChance();
 
             if (world.getRandom().nextDouble() <= blockMimicChance) {
-                NbtCompound nbt = blockEntity.createNbtWithIdentifyingData(world.getRegistryManager());
+                NbtCompound nbt = blockEntity.createNbtWithIdentifyingData(world.getRegistryManager()).copy();
                 SpawnerMimicEntity mimic = new SpawnerMimicEntity(world);
                 UUID uuid = mimic.getUuid();
+
+                if (nbt.contains("MinSpawnDelay", NbtElement.NUMBER_TYPE)) nbt.putShort("MinSpawnDelay", (short)(nbt.getShort("MinSpawnDelay") / 1.5));
+                if (nbt.contains("MaxSpawnDelay", NbtElement.NUMBER_TYPE)) nbt.putShort("MaxSpawnDelay", (short)(nbt.getShort("MaxSpawnDelay") / 1.5));
+                if (nbt.contains("Delay", NbtElement.NUMBER_TYPE)) nbt.putShort("Delay", (short)20);
+
                 mimic.readNbt(nbt);
                 mimic.setUuid(uuid);
                 mimic.refreshPositionAndAngles(pos, 0, 0);
