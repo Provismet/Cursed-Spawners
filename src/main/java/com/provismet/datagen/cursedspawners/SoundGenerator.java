@@ -18,9 +18,18 @@ public class SoundGenerator extends LilySoundProvider {
 
     @Override
     protected void generateSoundFile (RegistryWrapper.WrapperLookup registryLookup, SoundWriter writer) {
-        writer.add(CSSoundEvents.ENTITY_MIMIC_HURT, "subtitle.mimic.hurt", this.getNames(3, "mimic_hurt"));
-        writer.add(CSSoundEvents.ENTITY_MIMIC_AMBIENT, "subtitle.mimic.ambient", this.getNames(3, "mimic_ambient"));
-        writer.add(CSSoundEvents.ENTITY_MIMIC_DEATH, "subtitle.mimic.death", CursedSpawnersMain.identifier("mimic_death"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_HURT, "subtitle.mimic.hurt", this.getNames(3, "mob/spawner_mimic/mimic_hurt"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_AMBIENT, "subtitle.mimic.ambient", this.getNames(3, "mob/spawner_mimic/mimic_ambient"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_DEATH, "subtitle.mimic.death", CursedSpawnersMain.identifier("mob/spawner_mimic/mimic_death"));
+
+        writer.add(CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, "subtitle.spawner.knockback",
+            Identifier.ofVanilla("entity/wind_charge/wind_burst1"),
+            Identifier.ofVanilla("entity/wind_charge/wind_burst2"),
+            Identifier.ofVanilla("entity/wind_charge/wind_burst3")
+        );
+
+        writer.add(CSSoundEvents.BLOCK_SPAWNER_HEAL, "subtitle.spawner.heal", this.getNames(2, "block/spawner/heal"));
+        writer.add(CSSoundEvents.BLOCK_SPAWNER_BOOST, "subtitle.spawner.boost", this.getNames(2, "block/spawner/boost"));
     }
 
     private List<Identifier> getNames (int max, String base) {

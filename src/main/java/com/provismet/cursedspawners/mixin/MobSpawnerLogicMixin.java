@@ -3,6 +3,7 @@ package com.provismet.cursedspawners.mixin;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
 import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
+import com.provismet.cursedspawners.registries.CSSoundEvents;
 import net.minecraft.block.spawner.MobSpawnerLogic;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -13,6 +14,8 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -144,6 +147,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                         player.velocityModified = true;
                     }
                 }
+                world.playSound(null, centrePos.getX(), centrePos.getY(), centrePos.getZ(), SoundEvents.ENTITY_WIND_CHARGE_WIND_BURST, SoundCategory.BLOCKS, 1, 1);
             }
         }
 
@@ -161,6 +165,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                     hostile.heal(this.healAmount);
                     world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
                 }
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_HEAL, SoundCategory.BLOCKS, 1, 1);
             }
         }
 
@@ -178,6 +183,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                     hostile.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 30, 1));
                     world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
                 }
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_BOOST, SoundCategory.BLOCKS, 1, 1);
             }
         }
     }

@@ -28,5 +28,9 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add("subtitle.mimic.hurt", "Spawner Mimic cries");
         translationBuilder.add("subtitle.mimic.ambient", "Spawner Mimic whistles");
         translationBuilder.add("subtitle.mimic.death", "Spawner Mimic dies");
+
+        translationBuilder.add("subtitle.spawner.knockback", "Spawner bursts");
+        translationBuilder.add("subtitle.spawner.heal", "Spawner heals");
+        translationBuilder.add("subtitle.spawner.boost", "Spawner accelerates");
     }
 }

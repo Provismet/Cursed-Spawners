@@ -1,23 +1,45 @@
 {
+  "block.spawner.boost": {
+    "sounds": [
+      "cursed-spawners:block/spawner/boost_1",
+      "cursed-spawners:block/spawner/boost_2"
+    ],
+    "subtitle": "subtitle.spawner.boost"
+  },
+  "block.spawner.heal": {
+    "sounds": [
+      "cursed-spawners:block/spawner/heal_1",
+      "cursed-spawners:block/spawner/heal_2"
+    ],
+    "subtitle": "subtitle.spawner.heal"
+  },
+  "block.spawner.knockback": {
+    "sounds": [
+      "minecraft:entity/wind_charge/wind_burst1",
+      "minecraft:entity/wind_charge/wind_burst2",
+      "minecraft:entity/wind_charge/wind_burst3"
+    ],
+    "subtitle": "subtitle.spawner.knockback"
+  },
   "entity.mimic.ambient": {
     "sounds": [
-      "cursed-spawners:mimic_ambient_1",
-      "cursed-spawners:mimic_ambient_2",
-      "cursed-spawners:mimic_ambient_3"
+      "cursed-spawners:mob/spawner_mimic/mimic_ambient_1",
+      "cursed-spawners:mob/spawner_mimic/mimic_ambient_2",
+      "cursed-spawners:mob/spawner_mimic/mimic_ambient_3"
     ],
     "subtitle": "subtitle.mimic.ambient"
   },
   "entity.mimic.death": {
     "sounds": [
-      "cursed-spawners:mimic_death"
+      "cursed-spawners:mob/spawner_mimic/mimic_death"
     ],
     "subtitle": "subtitle.mimic.death"
   },
   "entity.mimic.hurt": {
     "sounds": [
-      "cursed-spawners:mimic_hurt_1",
-      "cursed-spawners:mimic_hurt_2",
-      "cursed-spawners:mimic_hurt_3"
+      "cursed-spawners:mob/spawner_mimic/mimic_hurt_1",
+      "cursed-spawners:mob/spawner_mimic/mimic_hurt_2",
+      "cursed-spawners:mob/spawner_mimic/mimic_hurt_3"
     ],
     "subtitle": "subtitle.mimic.hurt"
   }

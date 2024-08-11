@@ -9,5 +9,8 @@
   "item.cursed-spawners.mimic_spawn_egg": "Spawner Mimic Spawn Egg",
   "subtitle.mimic.ambient": "Spawner Mimic whistles",
   "subtitle.mimic.death": "Spawner Mimic dies",
-  "subtitle.mimic.hurt": "Spawner Mimic cries"
+  "subtitle.mimic.hurt": "Spawner Mimic cries",
+  "subtitle.spawner.boost": "Spawner accelerates",
+  "subtitle.spawner.heal": "Spawner heals",
+  "subtitle.spawner.knockback": "Spawner bursts"
 }
