@@ -119,6 +119,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     public void onSpawnPacket (EntitySpawnS2CPacket packet) {
         super.onSpawnPacket(packet);
         this.spawnState.start(this.age);
+        this.setRunningSpawnAnimation(true);
     }
 
     @Override
@@ -414,17 +415,16 @@ public class SpawnerMimicEntity extends HostileEntity {
 
         public MimicAppearGoal (SpawnerMimicEntity mob) {
             this.self = mob;
-            this.setControls(EnumSet.of(Control.MOVE, Control.LOOK, Control.JUMP));
+            this.setControls(EnumSet.of(Control.MOVE, Control.LOOK, Control.JUMP, Control.TARGET));
         }
 
         @Override
         public boolean canStart () {
-            return this.startingAge == INITIAL_AGE;
+            return this.startingAge == INITIAL_AGE || this.self.isRunningSpawnAnimation();
         }
 
         @Override
         public void start () {
-            this.self.setRunningSpawnAnimation(true);
             this.startingAge = this.self.age;
         }
 
