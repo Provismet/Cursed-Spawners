@@ -18,9 +18,9 @@ public class SoundGenerator extends LilySoundProvider {
 
     @Override
     protected void generateSoundFile (RegistryWrapper.WrapperLookup registryLookup, SoundWriter writer) {
-        writer.add(CSSoundEvents.ENTITY_MIMIC_HURT, "subtitles.entity.spawner_mimic.hurt", this.getNames(3, "mob/spawner_mimic/mimic_hurt"));
-        writer.add(CSSoundEvents.ENTITY_MIMIC_AMBIENT, "subtitles.entity.spawner_mimic.ambient", this.getNames(3, "mob/spawner_mimic/mimic_ambient"));
-        writer.add(CSSoundEvents.ENTITY_MIMIC_DEATH, "subtitles.entity.spawner_mimic.death", CursedSpawnersMain.identifier("mob/spawner_mimic/mimic_death"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_HURT, "subtitles.entity.spawner_mimic.hurt", this.getNames(3, "mob/spawner_mimic/hurt"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_AMBIENT, "subtitles.entity.spawner_mimic.ambient", this.getNames(3, "mob/spawner_mimic/ambient"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_DEATH, "subtitles.entity.spawner_mimic.death", CursedSpawnersMain.identifier("mob/spawner_mimic/death"));
         writer.add(CSSoundEvents.ENTITY_MIMIC_STEP, "subtitles.entity.spawner_mimic.step", this.getNames(3, "mob/spawner_mimic/step"));
         writer.add(CSSoundEvents.ENTITY_MIMIC_ATTACK, "subtitles.entity.spawner_mimic.attack", this.getNames(2, "mob/spawner_mimic/attack"));
 
