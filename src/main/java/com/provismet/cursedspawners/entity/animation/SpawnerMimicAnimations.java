@@ -15,7 +15,7 @@ public class SpawnerMimicAnimations {
 		.build();
 
 	public static final Animation WALK = Animation.Builder.create(2.0F).looping()
-		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.ROTATE, 
+		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, -3.5F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
@@ -24,18 +24,18 @@ public class SpawnerMimicAnimations {
 			new Keyframe(1.5F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.TRANSLATE, 
+		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.TRANSLATE,
 			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -2.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -3.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(1.25F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -2.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(1.25F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -3.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legSW", new Transformation(Transformation.Targets.ROTATE, 
+		.addBoneAnimation("legSW", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, -3.5F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
@@ -44,18 +44,18 @@ public class SpawnerMimicAnimations {
 			new Keyframe(1.75F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, -3.5F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legSW", new Transformation(Transformation.Targets.TRANSLATE, 
-			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -1.0F), Transformation.Interpolations.CUBIC),
+		.addBoneAnimation("legSW", new Transformation(Transformation.Targets.TRANSLATE,
+			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -1.75F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(1.0F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -1.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(1.0F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -1.75F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(2.0F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -1.0F), Transformation.Interpolations.CUBIC)
+			new Keyframe(2.0F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -1.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legSE", new Transformation(Transformation.Targets.ROTATE, 
+		.addBoneAnimation("legSE", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.25F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, 3.5F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
@@ -63,18 +63,18 @@ public class SpawnerMimicAnimations {
 			new Keyframe(1.5F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, 3.5F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.75F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legSE", new Transformation(Transformation.Targets.TRANSLATE, 
+		.addBoneAnimation("legSE", new Transformation(Transformation.Targets.TRANSLATE,
 			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(0.5F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -1.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(0.5F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -1.75F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(1.5F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -1.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(1.5F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.75F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -1.75F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legNE", new Transformation(Transformation.Targets.ROTATE, 
+		.addBoneAnimation("legNE", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.75F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, 3.5F), Transformation.Interpolations.CUBIC),
@@ -83,18 +83,18 @@ public class SpawnerMimicAnimations {
 			new Keyframe(1.75F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, 3.5F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("legNE", new Transformation(Transformation.Targets.TRANSLATE, 
+		.addBoneAnimation("legNE", new Transformation(Transformation.Targets.TRANSLATE,
 			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -3.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(0.75F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -2.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(0.75F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -3.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.25F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.5F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
-			new Keyframe(1.75F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, -2.0F), Transformation.Interpolations.CUBIC),
+			new Keyframe(1.75F, AnimationHelper.createTranslationalVector(0.0F, 2.0F, -2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(2.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, -3.0F), Transformation.Interpolations.CUBIC)
 		))
-		.addBoneAnimation("body", new Transformation(Transformation.Targets.ROTATE, 
+		.addBoneAnimation("body", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.5F, AnimationHelper.createRotationalVector(1.0F, 0.0F, 1.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(1.0F, AnimationHelper.createRotationalVector(1.0F, 0.0F, -1.0F), Transformation.Interpolations.CUBIC),
