@@ -24,5 +24,9 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add(CSGamerules.BREAK_SPEED.getTranslationKey() + ".description", "Mining speed for spawners is multiplied by this value.");
 
         translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
+
+        translationBuilder.add("subtitle.mimic.hurt", "Spawner Mimic cries");
+        translationBuilder.add("subtitle.mimic.ambient", "Spawner Mimic whistles");
+        translationBuilder.add("subtitle.mimic.death", "Spawner Mimic dies");
     }
 }

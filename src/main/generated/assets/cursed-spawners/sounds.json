@@ -1,0 +1,24 @@
+{
+  "entity.mimic.ambient": {
+    "sounds": [
+      "cursed-spawners:mimic_ambient_1",
+      "cursed-spawners:mimic_ambient_2",
+      "cursed-spawners:mimic_ambient_3"
+    ],
+    "subtitle": "subtitle.mimic.ambient"
+  },
+  "entity.mimic.death": {
+    "sounds": [
+      "cursed-spawners:mimic_death"
+    ],
+    "subtitle": "subtitle.mimic.death"
+  },
+  "entity.mimic.hurt": {
+    "sounds": [
+      "cursed-spawners:mimic_hurt_1",
+      "cursed-spawners:mimic_hurt_2",
+      "cursed-spawners:mimic_hurt_3"
+    ],
+    "subtitle": "subtitle.mimic.hurt"
+  }
+}

@@ -2,6 +2,7 @@ package com.provismet.cursedspawners.entity;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSEntityTypes;
+import com.provismet.cursedspawners.registries.CSSoundEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.spawner.MobSpawnerEntry;
@@ -20,6 +21,7 @@ import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -34,6 +36,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.collection.Weighted;
@@ -51,7 +54,6 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.function.Function;
 
-// TODO: Add sound effects
 public class SpawnerMimicEntity extends HostileEntity {
     private int spawnDelay = 20;
     private DataPool<MobSpawnerEntry> spawnPotentials = DataPool.<MobSpawnerEntry>empty();
@@ -237,6 +239,21 @@ public class SpawnerMimicEntity extends HostileEntity {
         if (!state.isOf(Blocks.COBWEB)) {
             super.slowMovement(state, multiplier);
         }
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound () {
+        return CSSoundEvents.ENTITY_MIMIC_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound () {
+        return CSSoundEvents.ENTITY_MIMIC_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound (DamageSource source) {
+        return CSSoundEvents.ENTITY_MIMIC_HURT;
     }
 
     protected void spawn (ServerWorld serverWorld) {

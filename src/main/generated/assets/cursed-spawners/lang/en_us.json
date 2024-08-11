@@ -6,5 +6,8 @@
   "gamerule.spawnerMimicChance.description": "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.",
   "gamerule.spawnerMiningSpeedModifier": "Mining Speed Modifier",
   "gamerule.spawnerMiningSpeedModifier.description": "Mining speed for spawners is multiplied by this value.",
-  "item.cursed-spawners.mimic_spawn_egg": "Spawner Mimic Spawn Egg"
+  "item.cursed-spawners.mimic_spawn_egg": "Spawner Mimic Spawn Egg",
+  "subtitle.mimic.ambient": "Spawner Mimic whistles",
+  "subtitle.mimic.death": "Spawner Mimic dies",
+  "subtitle.mimic.hurt": "Spawner Mimic cries"
 }
