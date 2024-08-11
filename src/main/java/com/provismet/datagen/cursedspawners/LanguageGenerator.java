@@ -25,13 +25,13 @@ public class LanguageGenerator extends FabricLanguageProvider {
 
         translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
 
-        translationBuilder.add("subtitle.mimic.hurt", "Spawner Mimic cries");
-        translationBuilder.add("subtitle.mimic.ambient", "Spawner Mimic whistles");
-        translationBuilder.add("subtitle.mimic.death", "Spawner Mimic dies");
-        translationBuilder.add("subtitle.mimic.attack", "Spawner Mimic attacks");
+        translationBuilder.add("subtitles.entity.spawner_mimic.hurt", "Spawner Mimic cries");
+        translationBuilder.add("subtitles.entity.spawner_mimic.ambient", "Spawner Mimic whistles");
+        translationBuilder.add("subtitles.entity.spawner_mimic.death", "Spawner Mimic dies");
+        translationBuilder.add("subtitles.entity.spawner_mimic.attack", "Spawner Mimic attacks");
 
-        translationBuilder.add("subtitle.spawner.knockback", "Spawner bursts");
-        translationBuilder.add("subtitle.spawner.heal", "Spawner heals");
-        translationBuilder.add("subtitle.spawner.boost", "Spawner accelerates");
+        translationBuilder.add("subtitles.block.spawner.knockback", "Spawner bursts");
+        translationBuilder.add("subtitles.block.spawner.heal", "Spawner heals");
+        translationBuilder.add("subtitles.block.spawner.boost", "Spawner accelerates");
     }
 }
