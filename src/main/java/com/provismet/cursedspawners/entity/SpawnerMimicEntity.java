@@ -90,8 +90,9 @@ public class SpawnerMimicEntity extends HostileEntity {
             .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.8)
             .add(EntityAttributes.GENERIC_ARMOR, 25)
             .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 5)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.23)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2);
+            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.275)
+            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2)
+            .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1);
     }
 
     @Override
