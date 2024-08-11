@@ -13,5 +13,6 @@
   "subtitles.entity.spawner_mimic.ambient": "Spawner Mimic whistles",
   "subtitles.entity.spawner_mimic.attack": "Spawner Mimic attacks",
   "subtitles.entity.spawner_mimic.death": "Spawner Mimic dies",
-  "subtitles.entity.spawner_mimic.hurt": "Spawner Mimic cries"
+  "subtitles.entity.spawner_mimic.hurt": "Spawner Mimic cries",
+  "subtitles.entity.spawner_mimic.step": "Spawner Mimic steps"
 }
