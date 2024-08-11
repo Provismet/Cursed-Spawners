@@ -330,8 +330,8 @@ public class SpawnerMimicEntity extends HostileEntity {
 
                 serverWorld.syncWorldEvent(WorldEvents.SPAWNER_SPAWNS_MOB, this.getBlockPos(), 0);
                 serverWorld.emitGameEvent(entity, GameEvent.ENTITY_PLACE, mobBlockPos);
-                if (entity instanceof MobEntity) {
-                    ((MobEntity)entity).playSpawnEffects();
+                if (entity instanceof MobEntity mobEntity) {
+                    mobEntity.playSpawnEffects();
                 }
 
                 spawnedSuccessfully = true;
