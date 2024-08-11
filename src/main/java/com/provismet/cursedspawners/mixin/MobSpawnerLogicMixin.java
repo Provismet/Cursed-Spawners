@@ -147,7 +147,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                         player.velocityModified = true;
                     }
                 }
-                world.playSound(null, centrePos.getX(), centrePos.getY(), centrePos.getZ(), SoundEvents.ENTITY_WIND_CHARGE_WIND_BURST, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundCategory.BLOCKS, 1, 1);
             }
         }
 

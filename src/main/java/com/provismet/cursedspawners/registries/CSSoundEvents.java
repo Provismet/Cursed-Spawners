@@ -11,7 +11,7 @@ public abstract class CSSoundEvents {
     public static final SoundEvent ENTITY_MIMIC_HURT = register("entity.mimic.hurt");
     public static final SoundEvent ENTITY_MIMIC_DEATH = register("entity.mimic.death");
 
-    public static final SoundEvent BLOCK_SPAWNER_KNOCKBACK = register("block.spawner.knockback", 6f);
+    public static final SoundEvent BLOCK_SPAWNER_KNOCKBACK = register("block.spawner.knockback", 8f);
     public static final SoundEvent BLOCK_SPAWNER_HEAL = register("block.spawner.heal", 8f);
     public static final SoundEvent BLOCK_SPAWNER_BOOST = register("block.spawner.boost", 8f);
 
