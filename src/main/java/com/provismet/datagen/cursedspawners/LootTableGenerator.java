@@ -10,6 +10,7 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.EnchantedCountIncreaseLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.RegistryKey;
@@ -44,7 +45,7 @@ public class LootTableGenerator extends SimpleFabricLootTableProvider {
                 )
                 .pool(
                     LootPool.builder()
-                        .rolls(ConstantLootNumberProvider.create(1))
+                        .rolls(BinomialLootNumberProvider.create(1, 0.5f))
                         .with(
                             ItemEntry.builder(Items.IRON_BARS)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 2)))

@@ -38,7 +38,7 @@
               "count": {
                 "type": "minecraft:uniform",
                 "max": 2.0,
-                "min": 0.0
+                "min": 1.0
               },
               "function": "minecraft:set_count"
             }
@@ -46,7 +46,11 @@
           "name": "minecraft:iron_bars"
         }
       ],
-      "rolls": 1.0
+      "rolls": {
+        "type": "minecraft:binomial",
+        "n": 1.0,
+        "p": 0.5
+      }
     }
   ]
 }
