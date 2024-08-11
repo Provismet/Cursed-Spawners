@@ -8,6 +8,7 @@
   "gamerule.spawnerMiningSpeedModifier.description": "Mining speed for spawners is multiplied by this value.",
   "item.cursed-spawners.mimic_spawn_egg": "Spawner Mimic Spawn Egg",
   "subtitle.mimic.ambient": "Spawner Mimic whistles",
+  "subtitle.mimic.attack": "Spawner Mimic attacks",
   "subtitle.mimic.death": "Spawner Mimic dies",
   "subtitle.mimic.hurt": "Spawner Mimic cries",
   "subtitle.spawner.boost": "Spawner accelerates",

@@ -29,6 +29,13 @@
     ],
     "subtitle": "subtitle.mimic.ambient"
   },
+  "entity.mimic.attack": {
+    "sounds": [
+      "cursed-spawners:mob/spawner_mimic/attack_1",
+      "cursed-spawners:mob/spawner_mimic/attack_2"
+    ],
+    "subtitle": "subtitle.mimic.attack"
+  },
   "entity.mimic.death": {
     "sounds": [
       "cursed-spawners:mob/spawner_mimic/mimic_death"
@@ -42,5 +49,13 @@
       "cursed-spawners:mob/spawner_mimic/mimic_hurt_3"
     ],
     "subtitle": "subtitle.mimic.hurt"
+  },
+  "entity.mimic.step": {
+    "sounds": [
+      "cursed-spawners:mob/spawner_mimic/step_1",
+      "cursed-spawners:mob/spawner_mimic/step_2",
+      "cursed-spawners:mob/spawner_mimic/step_3"
+    ],
+    "subtitle": "subtitle.mimic.step"
   }
 }

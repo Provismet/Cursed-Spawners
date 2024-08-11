@@ -21,6 +21,8 @@ public class SoundGenerator extends LilySoundProvider {
         writer.add(CSSoundEvents.ENTITY_MIMIC_HURT, "subtitle.mimic.hurt", this.getNames(3, "mob/spawner_mimic/mimic_hurt"));
         writer.add(CSSoundEvents.ENTITY_MIMIC_AMBIENT, "subtitle.mimic.ambient", this.getNames(3, "mob/spawner_mimic/mimic_ambient"));
         writer.add(CSSoundEvents.ENTITY_MIMIC_DEATH, "subtitle.mimic.death", CursedSpawnersMain.identifier("mob/spawner_mimic/mimic_death"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_STEP, "subtitle.mimic.step", this.getNames(3, "mob/spawner_mimic/step"));
+        writer.add(CSSoundEvents.ENTITY_MIMIC_ATTACK, "subtitle.mimic.attack", this.getNames(2, "mob/spawner_mimic/attack"));
 
         writer.add(CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, "subtitle.spawner.knockback",
             Identifier.ofVanilla("entity/wind_charge/wind_burst1"),

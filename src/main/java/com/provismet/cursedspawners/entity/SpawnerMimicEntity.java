@@ -242,6 +242,11 @@ public class SpawnerMimicEntity extends HostileEntity {
     }
 
     @Override
+    protected void playAttackSound () {
+        this.playSound(CSSoundEvents.ENTITY_MIMIC_ATTACK);
+    }
+
+    @Override
     protected SoundEvent getAmbientSound () {
         return CSSoundEvents.ENTITY_MIMIC_AMBIENT;
     }
@@ -254,6 +259,11 @@ public class SpawnerMimicEntity extends HostileEntity {
     @Override
     protected SoundEvent getHurtSound (DamageSource source) {
         return CSSoundEvents.ENTITY_MIMIC_HURT;
+    }
+
+    @Override
+    protected void playStepSound (BlockPos pos, BlockState state) {
+        this.playSound(CSSoundEvents.ENTITY_MIMIC_STEP);
     }
 
     protected void spawn (ServerWorld serverWorld) {
