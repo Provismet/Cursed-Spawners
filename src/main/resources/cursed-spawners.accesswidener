@@ -1,0 +1,3 @@
+accessWidener v2 named
+
+extendable method net/minecraft/entity/mob/MobEntity interactWithItem (Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;

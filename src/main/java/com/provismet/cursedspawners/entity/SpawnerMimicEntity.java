@@ -28,6 +28,8 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -35,15 +37,17 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
@@ -186,6 +190,11 @@ public class SpawnerMimicEntity extends HostileEntity {
     }
 
     @Override
+    public void onTrackedDataSet (TrackedData<?> data) {
+        super.onTrackedDataSet(data);
+    }
+
+    @Override
     public void tick () {
         this.prevMobEntryRotation = this.mobEntryRotation;
         this.mobEntryRotation = (this.mobEntryRotation + (double)(1000f / ((float)this.spawnDelay + 200f))) % 360.0;
@@ -268,9 +277,32 @@ public class SpawnerMimicEntity extends HostileEntity {
         this.playSound(CSSoundEvents.ENTITY_MIMIC_STEP);
     }
 
+    @Override
+    protected ActionResult interactMob (PlayerEntity player, Hand hand) {
+        ItemStack held = player.getStackInHand(hand);
+        if (held.getItem() instanceof SpawnEggItem spawnEgg) {
+            EntityType<?> entityType = spawnEgg.getEntityType(held);
+            this.setEntityType(entityType);
+            this.getWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
+            held.decrement(1);
+            this.spawnDelay = 20;
+            return ActionResult.success(this.getWorld().isClient);
+        }
+        else {
+            return super.interactMob(player, hand);
+        }
+    }
+
+    @Override
+    protected ActionResult interactWithItem (PlayerEntity player, Hand hand) {
+        ItemStack held = player.getStackInHand(hand);
+        if (held.getItem() instanceof SpawnEggItem) return ActionResult.PASS;
+        return super.interactWithItem(player, hand);
+    }
+
     protected void spawn (ServerWorld serverWorld) {
         boolean spawnedSuccessfully = false;
-        MobSpawnerEntry mobSpawnerEntry = this.getSpawnEntry(random);
+        MobSpawnerEntry mobSpawnerEntry = this.getSpawnEntry();
 
         for (int i = 0; i < this.spawnCount; i++) {
             NbtCompound nbtCompound = mobSpawnerEntry.getNbt();
@@ -362,6 +394,12 @@ public class SpawnerMimicEntity extends HostileEntity {
         this.spawnPotentials.getOrEmpty(this.random).ifPresent(spawnPotential -> this.setSpawnEntry(spawnPotential.data()));
     }
 
+    public void setEntityType (EntityType<?> type) {
+        this.getSpawnEntry().getNbt().putString("id", Registries.ENTITY_TYPE.getId(type).toString());
+        this.dataTracker.set(RENDERED_ENTITY, this.getSpawnEntry().getNbt());
+        this.renderedEntity = null;
+    }
+
     @Nullable
     public Entity getRenderedEntity () {
         if (this.renderedEntity == null && !this.getRenderedEntityNbt().isEmpty())
@@ -383,9 +421,9 @@ public class SpawnerMimicEntity extends HostileEntity {
         if (spawnEntry != null) this.dataTracker.set(RENDERED_ENTITY, spawnEntry.getNbt());
     }
 
-    private MobSpawnerEntry getSpawnEntry (Random random) {
+    private MobSpawnerEntry getSpawnEntry () {
         if (this.spawnEntry == null) {
-            this.setSpawnEntry(this.spawnPotentials.getOrEmpty(random).map(Weighted.Present::data).orElseGet(MobSpawnerEntry::new));
+            this.setSpawnEntry(this.spawnPotentials.getOrEmpty(this.random).map(Weighted.Present::data).orElseGet(MobSpawnerEntry::new));
         }
         return this.spawnEntry;
     }

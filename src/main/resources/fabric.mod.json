@@ -28,6 +28,7 @@
 	"mixins": [
 		"cursed-spawners.mixins.json"
 	],
+	"accessWidener": "cursed-spawners.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.0",
 		"minecraft": "~1.21",
