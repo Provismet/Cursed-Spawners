@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
@@ -18,6 +19,15 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
     @Override
     protected void configure (RegistryWrapper.WrapperLookup wrapperLookup) {
         this.getOrCreateTagBuilder(TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("extra-damage-enchantments", "arcane")))
+            .add(CSEntityTypes.SPAWNER_MIMIC);
+
+        this.getOrCreateTagBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE)
+            .add(CSEntityTypes.SPAWNER_MIMIC);
+
+        this.getOrCreateTagBuilder(EntityTypeTags.WITHER_FRIENDS)
+            .add(CSEntityTypes.SPAWNER_MIMIC);
+
+        this.getOrCreateTagBuilder(EntityTypeTags.ILLAGER_FRIENDS)
             .add(CSEntityTypes.SPAWNER_MIMIC);
     }
 }
