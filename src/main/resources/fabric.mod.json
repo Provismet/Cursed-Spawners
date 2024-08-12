@@ -11,7 +11,7 @@
 		"homepage": "https://github.com/Provismet/Cursed-Spawners",
 		"sources": "https://github.com/Provismet/Cursed-Spawners"
 	},
-	"license": "Lily License",
+	"license": "Lily License v1.1",
 	"icon": "assets/cursed-spawners/icon.png",
 	"environment": "*",
 	"entrypoints": {
