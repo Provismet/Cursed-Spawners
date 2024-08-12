@@ -1,5 +1,6 @@
 package com.provismet.datagen.cursedspawners;
 
+import com.provismet.cursedspawners.registries.CSEntityTypes;
 import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -22,6 +23,8 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getTranslationKey() + ".description", "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.");
         translationBuilder.add(CSGamerules.BREAK_SPEED.getTranslationKey(), "Mining Speed Modifier");
         translationBuilder.add(CSGamerules.BREAK_SPEED.getTranslationKey() + ".description", "Mining speed for spawners is multiplied by this value.");
+
+        translationBuilder.add(CSEntityTypes.SPAWNER_MIMIC, "Spawner Mimic");
 
         translationBuilder.add(CSItems.MIMIC_SPAWN_EGG, "Spawner Mimic Spawn Egg");
 
