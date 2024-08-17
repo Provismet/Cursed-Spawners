@@ -1,6 +1,9 @@
 <div align="center">
 
 # Cursed Spawners
+[![](https://img.shields.io/jitpack/version/com.github.Provismet/Cursed-Spawners?style=flat-square&logo=jitpack&color=F6F6F6)](https://jitpack.io/#Provismet/Cursed-Spawners)
+[![](https://img.shields.io/modrinth/dt/kpbD49Kv?style=flat-square&logo=modrinth&color=F6F6F6)](https://modrinth.com/mod/cursed-spawners)
+[![](https://img.shields.io/curseforge/dt/1083491?style=flat-square&logo=curseforge&color=F6F6F6)](https://www.curseforge.com/minecraft/mc-mods/cursed-spawners)
 
 </div>
 
