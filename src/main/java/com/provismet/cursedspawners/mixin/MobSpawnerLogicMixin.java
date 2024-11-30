@@ -140,7 +140,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                 world.spawnParticles(ParticleTypes.GUST_EMITTER_SMALL, centrePos.getX(), centrePos.getY(), centrePos.getZ(), 1, 0, 0, 0, 0);
                 List<ServerPlayerEntity> players = world.getPlayers(player -> player.getPos().isWithinRangeOf(centrePos, this.knockbackRadius, this.knockbackRadius) && !player.isCreative() && !player.isSpectator());
                 for (ServerPlayerEntity player : players) {
-                    double strength = this.knockbackStrength * (1 - player.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE));
+                    double strength = this.knockbackStrength * (1 - player.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE));
                     if (strength > 0) {
                         Vec3d velocity = new Vec3d(player.getX() - centrePos.getX(), player.getY() >= pos.getY() ? 0.5 : -0.5, player.getZ() - centrePos.getZ()).normalize().multiply(strength);
                         player.addVelocity(velocity);

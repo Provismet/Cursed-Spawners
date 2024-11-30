@@ -1,7 +1,7 @@
 package com.provismet.cursedspawners.entity.models;
 
-import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.entity.animation.SpawnerMimicAnimations;
+import com.provismet.cursedspawners.entity.renderers.states.SpawnerMimicRenderState;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -9,18 +9,12 @@ import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.model.TexturedModelData;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.SinglePartEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.util.math.MathHelper;
 
-public class SpawnerMimicModel extends SinglePartEntityModel<SpawnerMimicEntity> {
-	private final ModelPart root;
-	private final ModelPart body;
-
+public class SpawnerMimicModel extends EntityModel<SpawnerMimicRenderState> {
 	public SpawnerMimicModel (ModelPart root) {
-		this.root = root.getChild("root");
-		this.body = this.root.getChild("body");
+        super(root.getChild("root"));
 	}
 	public static TexturedModelData getTexturedModelData () {
 		ModelData modelData = new ModelData();
@@ -52,25 +46,12 @@ public class SpawnerMimicModel extends SinglePartEntityModel<SpawnerMimicEntity>
 	}
 
 	@Override
-	public void setAngles (SpawnerMimicEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		this.getPart().traverse().forEach(ModelPart::resetTransform);
+	public void setAngles (SpawnerMimicRenderState state) {
+		super.setAngles(state);
 
-		netHeadYaw = MathHelper.clamp(netHeadYaw, -30, 30);
-		this.body.yaw = netHeadYaw * MathHelper.RADIANS_PER_DEGREE;
-
-		this.animateMovement(SpawnerMimicAnimations.WALK, limbSwing, limbSwingAmount, 3f, 50f);
-		this.updateAnimation(entity.idleState, SpawnerMimicAnimations.IDLE, ageInTicks);
-		this.updateAnimation(entity.attackState, SpawnerMimicAnimations.ATTACK, ageInTicks);
-		this.updateAnimation(entity.spawnState, SpawnerMimicAnimations.SPAWN, ageInTicks);
-	}
-
-	@Override
-	public void render (MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-		this.root.render(matrices, vertices, light, overlay, color);
-	}
-
-	@Override
-	public ModelPart getPart () {
-		return this.root;
+		this.animateWalking(SpawnerMimicAnimations.WALK, state.limbFrequency, state.limbAmplitudeMultiplier, 3f, 50f);
+		this.animate(state.idleState, SpawnerMimicAnimations.IDLE, state.age);
+		this.animate(state.attackState, SpawnerMimicAnimations.ATTACK, state.age);
+		this.animate(state.spawnState, SpawnerMimicAnimations.SPAWN, state.age);
 	}
 }

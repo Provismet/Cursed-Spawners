@@ -32,7 +32,7 @@ public class LootTableGenerator extends SimpleFabricLootTableProvider {
         RegistryWrapper.WrapperLookup lookup = this.completableLookup.join();
 
         lootTableBiConsumer.accept(
-            CSEntityTypes.SPAWNER_MIMIC.getLootTableId(),
+            CSEntityTypes.SPAWNER_MIMIC.getLootTableKey().get(),
             LootTable.builder()
                 .pool(
                     LootPool.builder()

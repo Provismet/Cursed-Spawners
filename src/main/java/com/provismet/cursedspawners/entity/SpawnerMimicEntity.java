@@ -90,13 +90,13 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     public static DefaultAttributeContainer.Builder getSpawnerMimicAttributes () {
         return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.GENERIC_MAX_HEALTH, 10)
-            .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.8)
-            .add(EntityAttributes.GENERIC_ARMOR, 25)
-            .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 5)
-            .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.275)
-            .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2)
-            .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 1);
+            .add(EntityAttributes.MAX_HEALTH, 10)
+            .add(EntityAttributes.KNOCKBACK_RESISTANCE, 0.8)
+            .add(EntityAttributes.ARMOR, 25)
+            .add(EntityAttributes.ARMOR_TOUGHNESS, 5)
+            .add(EntityAttributes.MOVEMENT_SPEED, 0.275)
+            .add(EntityAttributes.ATTACK_DAMAGE, 2)
+            .add(EntityAttributes.ATTACK_KNOCKBACK, 1);
     }
 
     @Override
@@ -227,9 +227,9 @@ public class SpawnerMimicEntity extends HostileEntity {
     }
 
     @Override
-    public boolean tryAttack (Entity target) {
+    public boolean tryAttack (ServerWorld world, Entity target) {
         this.getWorld().sendEntityStatus(this, EntityStatuses.PLAY_ATTACK_SOUND);
-        return super.tryAttack(target);
+        return super.tryAttack(world, target);
     }
 
     @Override
@@ -286,7 +286,7 @@ public class SpawnerMimicEntity extends HostileEntity {
             this.getWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
             held.decrement(1);
             this.spawnDelay = 20;
-            return ActionResult.success(this.getWorld().isClient);
+            return ActionResult.SUCCESS;
         }
         else {
             return super.interactMob(player, hand);
@@ -333,7 +333,7 @@ public class SpawnerMimicEntity extends HostileEntity {
                     continue;
                 }
 
-                Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, serverWorld, entityx -> {
+                Entity entity = EntityType.loadEntityWithPassengers(nbtCompound, serverWorld, SpawnReason.SPAWNER, entityx -> {
                     entityx.refreshPositionAndAngles(mobX, mobY, mobZ, entityx.getYaw(), entityx.getPitch());
                     return entityx;
                 });
@@ -403,7 +403,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     @Nullable
     public Entity getRenderedEntity () {
         if (this.renderedEntity == null && !this.getRenderedEntityNbt().isEmpty())
-            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityNbt(), this.getWorld(), Function.identity());
+            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityNbt(), this.getWorld(), SpawnReason.SPAWNER, Function.identity());
 
         return this.renderedEntity;
     }

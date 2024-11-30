@@ -22,7 +22,7 @@ public record AOEChargingParticleEffect (int maxAge, Vector3f colour) implements
     public static final PacketCodec<RegistryByteBuf, AOEChargingParticleEffect> PACKET_CODEC = PacketCodec.tuple(
         PacketCodecs.INTEGER,
         AOEChargingParticleEffect::maxAge,
-        PacketCodecs.VECTOR3F,
+        PacketCodecs.VECTOR_3F,
         AOEChargingParticleEffect::colour,
         AOEChargingParticleEffect::new
     );

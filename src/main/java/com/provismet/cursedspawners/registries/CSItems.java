@@ -5,10 +5,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+
+import java.util.function.Function;
 
 public abstract class CSItems {
-    public static final Item MIMIC_SPAWN_EGG = Registry.register(Registries.ITEM, CursedSpawnersMain.identifier("mimic_spawn_egg"),
-        new SpawnEggItem(CSEntityTypes.SPAWNER_MIMIC, 0x2A4455, 0x6E0453, new Item.Settings()));
+    public static final Item MIMIC_SPAWN_EGG = register("mimic_spawn_egg", settings -> new SpawnEggItem(CSEntityTypes.SPAWNER_MIMIC, 0x2A4455, 0x6E0453, settings));
+
+    private static <T extends Item> T register (String name, Function<Item.Settings, T> settingsFunction) {
+        RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, CursedSpawnersMain.identifier(name));
+        Item.Settings settings = new Item.Settings().registryKey(key);
+        return Registry.register(Registries.ITEM, key, settingsFunction.apply(settings));
+    }
 
     public static void init () {}
 }
