@@ -11,7 +11,7 @@ import net.minecraft.registry.RegistryKeys;
 import java.util.function.Function;
 
 public abstract class CSItems {
-    public static final Item MIMIC_SPAWN_EGG = register("mimic_spawn_egg", settings -> new SpawnEggItem(CSEntityTypes.SPAWNER_MIMIC, 0x2A4455, 0x6E0453, settings));
+    public static final Item MIMIC_SPAWN_EGG = register("mimic_spawn_egg", settings -> new SpawnEggItem(CSEntityTypes.SPAWNER_MIMIC, settings));
 
     private static <T extends Item> T register (String name, Function<Item.Settings, T> settingsFunction) {
         RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, CursedSpawnersMain.identifier(name));

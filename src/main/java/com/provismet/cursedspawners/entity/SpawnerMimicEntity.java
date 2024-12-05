@@ -281,7 +281,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     protected ActionResult interactMob (PlayerEntity player, Hand hand) {
         ItemStack held = player.getStackInHand(hand);
         if (held.getItem() instanceof SpawnEggItem spawnEgg) {
-            EntityType<?> entityType = spawnEgg.getEntityType(held);
+            EntityType<?> entityType = spawnEgg.getEntityType(this.getRegistryManager(), held);
             this.setEntityType(entityType);
             this.getWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
             held.decrement(1);
