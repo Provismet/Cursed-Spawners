@@ -6,13 +6,11 @@ import com.provismet.cursedspawners.networking.ClientPacketReceiver;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
@@ -48,9 +46,9 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
                 SpawnerMimicEntity mimic = new SpawnerMimicEntity(world);
                 UUID uuid = mimic.getUuid();
 
-                if (nbt.contains("MinSpawnDelay", NbtElement.NUMBER_TYPE)) nbt.putShort("MinSpawnDelay", (short)(nbt.getShort("MinSpawnDelay") / 1.5));
-                if (nbt.contains("MaxSpawnDelay", NbtElement.NUMBER_TYPE)) nbt.putShort("MaxSpawnDelay", (short)(nbt.getShort("MaxSpawnDelay") / 1.5));
-                if (nbt.contains("Delay", NbtElement.NUMBER_TYPE)) nbt.putShort("Delay", (short)20);
+                if (nbt.getShort("MinSpawnDelay").isPresent()) nbt.putShort("MinSpawnDelay", (short)(nbt.getShort("MinSpawnDelay").get() / 1.5));
+                if (nbt.getShort("MaxSpawnDelay").isPresent()) nbt.putShort("MaxSpawnDelay", (short)(nbt.getShort("MaxSpawnDelay").get() / 1.5));
+                if (nbt.contains("Delay")) nbt.putShort("Delay", (short)20);
 
                 mimic.readNbt(nbt);
                 mimic.setUuid(uuid);
@@ -59,8 +57,7 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
                 world.spawnEntity(mimic);
             }
             else {
-                BlockState air = Blocks.AIR.getDefaultState();
-                ItemScatterer.onStateReplaced(state, air, world, pos);
+                ItemScatterer.onStateReplaced(state, world, pos);
             }
         }
         return state;

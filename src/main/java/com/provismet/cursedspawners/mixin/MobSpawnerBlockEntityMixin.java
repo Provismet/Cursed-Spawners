@@ -11,6 +11,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.block.spawner.MobSpawnerLogic;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerLootComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,6 +45,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Mixin(MobSpawnerBlockEntity.class)
 public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements IMixinMobSpawnerBlockEntity, LootableInventory {
@@ -72,18 +74,24 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
 
     @Inject(method="readNbt", at=@At("TAIL"))
     private void readExtendedNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
-        if (nbt.contains(MIMIC_CHANCE, NbtElement.DOUBLE_TYPE)) this.mimicChance = nbt.getDouble(MIMIC_CHANCE);
-        else this.mimicChance = PASSTHROUGH_MIMIC_CHANCE;
+        this.mimicChance = nbt.getDouble(MIMIC_CHANCE, PASSTHROUGH_MIMIC_CHANCE);
+        this.shouldRandomiseEffects = nbt.getBoolean(RANDOMISE, true);
+        this.breakAction = nbt.getString(BREAK_ACTION, SpawnerBreakEffects.NORMAL_BREAK);
 
-        if (nbt.contains(RANDOMISE)) this.shouldRandomiseEffects = nbt.getBoolean(RANDOMISE);
-
-        if (nbt.contains(REFORGE_ACTIONS, NbtElement.LIST_TYPE)) {
+        if (nbt.getList(REFORGE_ACTIONS).isPresent()) {
             reforgeActions = new ArrayList<>();
-            reforgeActions.addAll(nbt.getList(REFORGE_ACTIONS, NbtElement.STRING_TYPE).stream().map(NbtElement::asString).toList());
-        } else this.reforgeActions = new ArrayList<>();
-
-        if (nbt.contains(BREAK_ACTION, NbtElement.STRING_TYPE)) this.breakAction = nbt.getString(BREAK_ACTION);
-        else this.breakAction = SpawnerBreakEffects.NORMAL_BREAK;
+            reforgeActions.addAll(
+                nbt.getList(REFORGE_ACTIONS).get()
+                    .stream()
+                    .map(NbtElement::asString)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList()
+            );
+        }
+        else {
+            this.reforgeActions = new ArrayList<>();
+        }
 
         this.readLootTable(nbt);
     }
@@ -274,7 +282,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
     }
 
     @Override
-    protected void readComponents (BlockEntity.ComponentsAccess components) {
+    protected void readComponents (ComponentsAccess components) {
         super.readComponents(components);
         ContainerLootComponent containerLootComponent = components.get(DataComponentTypes.CONTAINER_LOOT);
         if (containerLootComponent != null) {

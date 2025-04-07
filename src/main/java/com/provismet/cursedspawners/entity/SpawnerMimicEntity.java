@@ -31,7 +31,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -43,8 +42,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
-import net.minecraft.util.collection.DataPool;
-import net.minecraft.util.collection.Weighted;
+import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -60,7 +58,7 @@ import java.util.function.Function;
 
 public class SpawnerMimicEntity extends HostileEntity {
     private int spawnDelay = 20;
-    private DataPool<MobSpawnerEntry> spawnPotentials = DataPool.<MobSpawnerEntry>empty();
+    private Pool<MobSpawnerEntry> spawnPotentials = Pool.empty();
     private MobSpawnerEntry spawnEntry;
     private double mobEntryRotation;
     private double prevMobEntryRotation;
@@ -130,41 +128,31 @@ public class SpawnerMimicEntity extends HostileEntity {
     public void readCustomDataFromNbt (NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
 
-        this.spawnDelay = nbt.getShort("Delay");
-        boolean bl = nbt.contains("SpawnData", NbtElement.COMPOUND_TYPE);
-        if (bl) {
+        this.spawnDelay = nbt.getShort("Delay", (short)20);
+        if (nbt.getCompound("SpawnData").isPresent()) {
             MobSpawnerEntry mobSpawnerEntry = MobSpawnerEntry.CODEC
-                .parse(NbtOps.INSTANCE, nbt.getCompound("SpawnData"))
+                .parse(NbtOps.INSTANCE, nbt.getCompound("SpawnData").get())
                 .resultOrPartial(string -> CursedSpawnersMain.LOGGER.warn("Invalid SpawnData: {}", string))
                 .orElseGet(MobSpawnerEntry::new);
             this.setSpawnEntry(mobSpawnerEntry);
         }
 
-        boolean bl2 = nbt.contains("SpawnPotentials", NbtElement.LIST_TYPE);
-        if (bl2) {
-            NbtList nbtList = nbt.getList("SpawnPotentials", NbtElement.COMPOUND_TYPE);
+        if (nbt.getList("SpawnPotentials").isPresent()) {
+            NbtList nbtList = nbt.getList("SpawnPotentials").get();
             this.spawnPotentials = MobSpawnerEntry.DATA_POOL_CODEC
                 .parse(NbtOps.INSTANCE, nbtList)
                 .resultOrPartial(error -> CursedSpawnersMain.LOGGER.warn("Invalid SpawnPotentials list: {}", error))
-                .orElseGet(() -> DataPool.<MobSpawnerEntry>empty());
+                .orElseGet(Pool::empty);
         } else {
-            this.spawnPotentials = DataPool.of(this.spawnEntry != null ? this.spawnEntry : new MobSpawnerEntry());
+            this.spawnPotentials = Pool.of(this.spawnEntry != null ? this.spawnEntry : new MobSpawnerEntry());
         }
 
-        if (nbt.contains("MinSpawnDelay", NbtElement.NUMBER_TYPE)) {
-            this.minSpawnDelay = nbt.getShort("MinSpawnDelay");
-            this.maxSpawnDelay = nbt.getShort("MaxSpawnDelay");
-            this.spawnCount = nbt.getShort("SpawnCount");
-        }
-
-        if (nbt.contains("MaxNearbyEntities", NbtElement.NUMBER_TYPE)) {
-            this.maxNearbyEntities = nbt.getShort("MaxNearbyEntities");
-            this.requiredPlayerRange = nbt.getShort("RequiredPlayerRange");
-        }
-
-        if (nbt.contains("SpawnRange", NbtElement.NUMBER_TYPE)) {
-            this.spawnRange = nbt.getShort("SpawnRange");
-        }
+        this.minSpawnDelay = nbt.getShort("MinSpawnDelay", (short)this.minSpawnDelay);
+        this.maxSpawnDelay = nbt.getShort("MaxSpawnDelay", (short)this.maxSpawnDelay);
+        this.spawnCount = nbt.getShort("SpawnCount", (short)this.spawnCount);
+        this.maxNearbyEntities = nbt.getShort("MaxNearbyEntities", (short)this.maxNearbyEntities);
+        this.requiredPlayerRange = nbt.getShort("RequiredPlayerRange", (short)this.requiredPlayerRange);
+        this.spawnRange = nbt.getShort("SpawnRange", (short)this.spawnRange);
 
         this.renderedEntity = null;
     }
@@ -210,8 +198,8 @@ public class SpawnerMimicEntity extends HostileEntity {
             double x = this.getX() + this.random.nextDouble() - 0.5;
             double y = this.getY() + this.random.nextDouble();
             double z = this.getZ() + this.random.nextDouble() - 0.5;
-            this.getWorld().addParticle(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
-            this.getWorld().addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
+            this.getWorld().addParticleClient(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
+            this.getWorld().addParticleClient(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
         }
 
         super.tick();
@@ -312,11 +300,10 @@ public class SpawnerMimicEntity extends HostileEntity {
                 return;
             }
 
-            NbtList nbtList = nbtCompound.getList("Pos", NbtElement.DOUBLE_TYPE);
-            int nbtSize = nbtList.size();
-            double mobX = nbtSize >= 1 ? nbtList.getDouble(0) : this.getX() + (this.random.nextDouble() - this.random.nextDouble()) * (double)this.spawnRange + 0.5;
-            double mobY = nbtSize >= 2 ? nbtList.getDouble(1) : this.getY() + this.random.nextInt(3) - 1;
-            double mobZ = nbtSize >= 3 ? nbtList.getDouble(2) : this.getZ() + (this.random.nextDouble() - this.random.nextDouble()) * (double)this.spawnRange + 0.5;
+            NbtList nbtList = nbtCompound.getListOrEmpty("Pos");
+            double mobX = nbtList.getDouble(0, this.getX() + (this.random.nextDouble() - this.random.nextDouble()) * (double)this.spawnRange + 0.5);
+            double mobY = nbtList.getDouble(1, this.getY() + this.random.nextInt(3) - 1);
+            double mobZ = nbtList.getDouble(2, this.getZ() + (this.random.nextDouble() - this.random.nextDouble()) * (double)this.spawnRange + 0.5);
             if (this.getWorld().isSpaceEmpty(optionalEntityType.get().getSpawnBox(mobX, mobY, mobZ))) {
                 BlockPos mobBlockPos = BlockPos.ofFloored(mobX, mobY, mobZ);
                 if (mobSpawnerEntry.getCustomSpawnRules().isPresent()) {
@@ -359,8 +346,7 @@ public class SpawnerMimicEntity extends HostileEntity {
                         continue;
                     }
 
-                    boolean bl2 = mobSpawnerEntry.getNbt().getSize() == 1 && mobSpawnerEntry.getNbt().contains("id", NbtElement.STRING_TYPE);
-                    if (bl2) {
+                    if (mobSpawnerEntry.getNbt().getSize() == 1 && mobSpawnerEntry.getNbt().contains("id")) {
                         ((MobEntity)entity).initialize(serverWorld, serverWorld.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null);
                     }
 
@@ -391,7 +377,7 @@ public class SpawnerMimicEntity extends HostileEntity {
         if (this.maxSpawnDelay <= this.minSpawnDelay) this.spawnDelay = this.minSpawnDelay;
         else this.spawnDelay = this.minSpawnDelay + this.random.nextInt(this.maxSpawnDelay - this.minSpawnDelay);
 
-        this.spawnPotentials.getOrEmpty(this.random).ifPresent(spawnPotential -> this.setSpawnEntry(spawnPotential.data()));
+        this.spawnPotentials.getOrEmpty(this.random).ifPresent(this::setSpawnEntry);
     }
 
     public void setEntityType (EntityType<?> type) {
@@ -423,7 +409,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     private MobSpawnerEntry getSpawnEntry () {
         if (this.spawnEntry == null) {
-            this.setSpawnEntry(this.spawnPotentials.getOrEmpty(this.random).map(Weighted.Present::data).orElseGet(MobSpawnerEntry::new));
+            this.setSpawnEntry(this.spawnPotentials.getOrEmpty(this.random).orElseGet(MobSpawnerEntry::new));
         }
         return this.spawnEntry;
     }

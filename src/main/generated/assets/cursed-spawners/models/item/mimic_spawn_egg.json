@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "cursed-spawners:item/mimic_spawn_egg"
+  }
+}

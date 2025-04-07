@@ -10,12 +10,10 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -64,40 +62,17 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
 
     @Inject(method="readNbt", at=@At("TAIL"))
     private void readExtendedNbt (World world, BlockPos pos, NbtCompound nbt, CallbackInfo info) {
-        if (nbt.contains(CAN_KNOCKBACK)) this.canKnockback = nbt.getBoolean(CAN_KNOCKBACK);
-        else this.canKnockback = false;
-
-        if (nbt.contains(MAX_KNOCKBACK_TIMER, NbtElement.INT_TYPE)) this.maxKnockbackTimer = nbt.getInt(MAX_KNOCKBACK_TIMER);
-        else this.maxKnockbackTimer = 200;
-
-        if (nbt.contains(KNOCKBACK_STRENGTH, NbtElement.DOUBLE_TYPE)) this.knockbackStrength = nbt.getDouble(KNOCKBACK_STRENGTH);
-        else this.knockbackStrength = 0.2;
-
-        if (nbt.contains(KNOCKBACK_RADIUS, NbtElement.DOUBLE_TYPE)) this.knockbackRadius = nbt.getDouble(KNOCKBACK_RADIUS);
-        else this.knockbackRadius = 4;
-
-
-        if (nbt.contains(CAN_HEAL)) this.canHeal = nbt.getBoolean(CAN_HEAL);
-        else this.canHeal = false;
-
-        if (nbt.contains(MAX_HEAL_TIMER, NbtElement.INT_TYPE)) this.maxHealTimer = nbt.getInt(MAX_HEAL_TIMER);
-        else this.maxHealTimer = 200;
-
-        if (nbt.contains(HEAL_AMOUNT, NbtElement.FLOAT_TYPE)) this.healAmount = nbt.getFloat(HEAL_AMOUNT);
-        else this.healAmount = 0f;
-
-        if (nbt.contains(HEAL_RADIUS, NbtElement.DOUBLE_TYPE)) this.healRadius = nbt.getDouble(HEAL_RADIUS);
-        else this.healRadius = 0;
-
-
-        if (nbt.contains(CAN_BOOST)) this.canBoost = nbt.getBoolean(CAN_BOOST);
-        else this.canBoost = false;
-
-        if (nbt.contains(MAX_BOOST_TIMER, NbtElement.INT_TYPE)) this.maxBoostTimer = nbt.getInt(MAX_BOOST_TIMER);
-        else this.maxKnockbackTimer = 200;
-
-        if (nbt.contains(BOOST_RADIUS, NbtElement.DOUBLE_TYPE)) this.boostRadius = nbt.getDouble(BOOST_RADIUS);
-        else this.boostRadius = 0;
+        this.canKnockback = nbt.getBoolean(CAN_KNOCKBACK, false);
+        this.maxKnockbackTimer = nbt.getInt(MAX_KNOCKBACK_TIMER, 200);
+        this.knockbackStrength = nbt.getDouble(KNOCKBACK_STRENGTH, 0.2);
+        this.knockbackRadius = nbt.getDouble(KNOCKBACK_RADIUS, 4);
+        this.canHeal = nbt.getBoolean(CAN_HEAL, false);
+        this.maxHealTimer = nbt.getInt(MAX_HEAL_TIMER, 200);
+        this.healAmount = nbt.getFloat(HEAL_AMOUNT, 0f);
+        this.healRadius = nbt.getDouble(HEAL_RADIUS, 0);
+        this.canBoost = nbt.getBoolean(CAN_BOOST, false);
+        this.maxBoostTimer = nbt.getInt(MAX_BOOST_TIMER, 200);
+        this.boostRadius = nbt.getDouble(BOOST_RADIUS, 0);
 
         this.knockbackTimer = Math.min(this.knockbackTimer, this.maxKnockbackTimer);
         this.healTimer = Math.min(this.healTimer, this.maxHealTimer);
