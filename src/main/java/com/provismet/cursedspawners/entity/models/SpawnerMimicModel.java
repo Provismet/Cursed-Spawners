@@ -9,12 +9,23 @@ import net.minecraft.client.model.ModelPartBuilder;
 import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.model.EntityModel;
 
 public class SpawnerMimicModel extends EntityModel<SpawnerMimicRenderState> {
+	private final Animation idleAnimation;
+	private final Animation walkAnimation;
+	private final Animation spawnAnimation;
+	private final Animation attackAnimation;
+
 	public SpawnerMimicModel (ModelPart root) {
         super(root.getChild("root"));
+		this.idleAnimation = SpawnerMimicAnimations.IDLE.createAnimation(root);
+		this.walkAnimation = SpawnerMimicAnimations.WALK.createAnimation(root);
+		this.spawnAnimation = SpawnerMimicAnimations.SPAWN.createAnimation(root);
+		this.attackAnimation = SpawnerMimicAnimations.ATTACK.createAnimation(root);
 	}
+
 	public static TexturedModelData getTexturedModelData () {
 		ModelData modelData = new ModelData();
 		ModelPartData modelPartData = modelData.getRoot();
@@ -48,9 +59,9 @@ public class SpawnerMimicModel extends EntityModel<SpawnerMimicRenderState> {
 	public void setAngles (SpawnerMimicRenderState state) {
 		super.setAngles(state);
 
-		this.animateWalking(SpawnerMimicAnimations.WALK, state.limbSwingAnimationProgress, state.limbSwingAmplitude, 3f, 50f);
-		this.animate(state.idleState, SpawnerMimicAnimations.IDLE, state.age);
-		this.animate(state.attackState, SpawnerMimicAnimations.ATTACK, state.age);
-		this.animate(state.spawnState, SpawnerMimicAnimations.SPAWN, state.age);
+		this.walkAnimation.applyWalking(state.limbSwingAnimationProgress, state.limbSwingAmplitude, 3f, 50f);
+		this.idleAnimation.apply(state.idleState, state.age);
+		this.attackAnimation.apply(state.attackState, state.age);
+		this.spawnAnimation.apply(state.spawnState, state.age);
 	}
 }

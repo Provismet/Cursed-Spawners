@@ -10,6 +10,7 @@ import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,5 +33,9 @@ public class CursedSpawnersMain implements ModInitializer {
 		CSItemGroups.register();
 
 		PayloadTypeRegistry.playS2C().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);
+
+		ServerPlayConnectionEvents.JOIN.register((networkHandler, packetSender, server) -> {
+			packetSender.sendPacket(new GameRulePayloadS2C((float)server.getOverworld().getGameRules().get(CSGamerules.BREAK_SPEED).get()));
+		});
 	}
 }

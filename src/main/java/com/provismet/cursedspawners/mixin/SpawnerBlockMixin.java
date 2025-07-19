@@ -1,5 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
+import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
@@ -12,6 +13,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -50,11 +54,14 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
                 if (nbt.getShort("MaxSpawnDelay").isPresent()) nbt.putShort("MaxSpawnDelay", (short)(nbt.getShort("MaxSpawnDelay").get() / 1.5));
                 if (nbt.contains("Delay")) nbt.putShort("Delay", (short)20);
 
-                mimic.readNbt(nbt);
-                mimic.setUuid(uuid);
-                mimic.refreshPositionAndAngles(pos, 0, 0);
-                mimic.setAttacker(player);
-                world.spawnEntity(mimic);
+                try (ErrorReporter.Logging logging = new ErrorReporter.Logging(this::toString, CursedSpawnersMain.LOGGER)) {
+                    ReadView view = NbtReadView.create(logging, serverWorld.getRegistryManager(), nbt);
+                    mimic.readData(view);
+                    mimic.setUuid(uuid);
+                    mimic.refreshPositionAndAngles(pos, 0, 0);
+                    mimic.setAttacker(player);
+                    world.spawnEntity(mimic);
+                }
             }
             else {
                 ItemScatterer.onStateReplaced(state, world, pos);

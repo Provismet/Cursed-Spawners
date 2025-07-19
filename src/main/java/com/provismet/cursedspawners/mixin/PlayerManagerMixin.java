@@ -29,11 +29,11 @@ public abstract class PlayerManagerMixin {
         )
     )
     private void sendJoinPacket (ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
-        ServerPlayNetworking.send(player, new GameRulePayloadS2C((float)this.server.getOverworld().getGameRules().get(CSGamerules.BREAK_SPEED).get()));
+        //ServerPlayNetworking.send(player, new GameRulePayloadS2C((float)this.server.getOverworld().getGameRules().get(CSGamerules.BREAK_SPEED).get()));
     }
 
     @Inject(method="remove", at=@At("HEAD"))
     private void sendLeavePacket (ServerPlayerEntity player, CallbackInfo info) {
-        ServerPlayNetworking.send(player, new GameRulePayloadS2C(1f));
+        //ServerPlayNetworking.send(player, new GameRulePayloadS2C(1f));
     }
 }

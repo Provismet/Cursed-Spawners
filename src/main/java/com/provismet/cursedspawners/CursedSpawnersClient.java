@@ -6,6 +6,7 @@ import com.provismet.cursedspawners.registries.client.CSEntityRenderers;
 import com.provismet.cursedspawners.registries.client.CSModelLayers;
 import com.provismet.cursedspawners.registries.client.CSParticleFactories;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class CursedSpawnersClient implements ClientModInitializer {
@@ -16,5 +17,9 @@ public class CursedSpawnersClient implements ClientModInitializer {
         CSEntityRenderers.register();
 
         ClientPlayNetworking.registerGlobalReceiver(GameRulePayloadS2C.ID, (payload, context) -> ClientPacketReceiver.SPAWNER_BREAK_MODIFIER = payload.value());
+
+        ClientPlayConnectionEvents.DISCONNECT.register((clientPlayNetworkHandler, minecraftClient) -> {
+            ClientPacketReceiver.SPAWNER_BREAK_MODIFIER = 1f;
+        });
     }
 }

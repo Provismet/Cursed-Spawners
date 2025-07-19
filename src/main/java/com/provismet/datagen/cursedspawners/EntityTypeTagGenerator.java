@@ -18,16 +18,16 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
 
     @Override
     protected void configure (RegistryWrapper.WrapperLookup wrapperLookup) {
-        this.getOrCreateTagBuilder(TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("extra-damage-enchantments", "arcane")))
+        this.valueLookupBuilder(TagKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("extra-damage-enchantments", "arcane")))
             .add(CSEntityTypes.SPAWNER_MIMIC);
 
-        this.getOrCreateTagBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE)
+        this.valueLookupBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE)
             .add(CSEntityTypes.SPAWNER_MIMIC);
 
-        this.getOrCreateTagBuilder(EntityTypeTags.WITHER_FRIENDS)
+        this.valueLookupBuilder(EntityTypeTags.WITHER_FRIENDS)
             .add(CSEntityTypes.SPAWNER_MIMIC);
 
-        this.getOrCreateTagBuilder(EntityTypeTags.ILLAGER_FRIENDS)
+        this.valueLookupBuilder(EntityTypeTags.ILLAGER_FRIENDS)
             .add(CSEntityTypes.SPAWNER_MIMIC);
     }
 }

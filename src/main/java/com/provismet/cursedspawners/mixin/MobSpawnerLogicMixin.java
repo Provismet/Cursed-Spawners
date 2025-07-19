@@ -9,11 +9,12 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -23,7 +24,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -60,40 +60,40 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
     @Unique private int maxBoostTimer = 200;
     @Unique private double boostRadius = 0f;
 
-    @Inject(method="readNbt", at=@At("TAIL"))
-    private void readExtendedNbt (World world, BlockPos pos, NbtCompound nbt, CallbackInfo info) {
-        this.canKnockback = nbt.getBoolean(CAN_KNOCKBACK, false);
-        this.maxKnockbackTimer = nbt.getInt(MAX_KNOCKBACK_TIMER, 200);
-        this.knockbackStrength = nbt.getDouble(KNOCKBACK_STRENGTH, 0.2);
-        this.knockbackRadius = nbt.getDouble(KNOCKBACK_RADIUS, 4);
-        this.canHeal = nbt.getBoolean(CAN_HEAL, false);
-        this.maxHealTimer = nbt.getInt(MAX_HEAL_TIMER, 200);
-        this.healAmount = nbt.getFloat(HEAL_AMOUNT, 0f);
-        this.healRadius = nbt.getDouble(HEAL_RADIUS, 0);
-        this.canBoost = nbt.getBoolean(CAN_BOOST, false);
-        this.maxBoostTimer = nbt.getInt(MAX_BOOST_TIMER, 200);
-        this.boostRadius = nbt.getDouble(BOOST_RADIUS, 0);
+    @Inject(method="readData", at=@At("TAIL"))
+    private void readExtendedNbt (World world, BlockPos pos, ReadView view, CallbackInfo ci) {
+        this.canKnockback = view.getBoolean(CAN_KNOCKBACK, false);
+        this.maxKnockbackTimer = view.getInt(MAX_KNOCKBACK_TIMER, 200);
+        this.knockbackStrength = view.getDouble(KNOCKBACK_STRENGTH, 0.2);
+        this.knockbackRadius = view.getDouble(KNOCKBACK_RADIUS, 4);
+        this.canHeal = view.getBoolean(CAN_HEAL, false);
+        this.maxHealTimer = view.getInt(MAX_HEAL_TIMER, 200);
+        this.healAmount = view.getFloat(HEAL_AMOUNT, 0f);
+        this.healRadius = view.getDouble(HEAL_RADIUS, 0);
+        this.canBoost = view.getBoolean(CAN_BOOST, false);
+        this.maxBoostTimer = view.getInt(MAX_BOOST_TIMER, 200);
+        this.boostRadius = view.getDouble(BOOST_RADIUS, 0);
 
         this.knockbackTimer = Math.min(this.knockbackTimer, this.maxKnockbackTimer);
         this.healTimer = Math.min(this.healTimer, this.maxHealTimer);
         this.boostTimer = Math.min(this.boostTimer, this.maxBoostTimer);
     }
 
-    @Inject(method="writeNbt", at=@At("TAIL"))
-    private void writeExtendedNbt (NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-        nbt.putBoolean(CAN_KNOCKBACK, this.canKnockback);
-        nbt.putInt(MAX_KNOCKBACK_TIMER, this.maxKnockbackTimer);
-        nbt.putDouble(KNOCKBACK_STRENGTH, this.knockbackStrength);
-        nbt.putDouble(KNOCKBACK_RADIUS, this.knockbackRadius);
+    @Inject(method="writeData", at=@At("TAIL"))
+    private void writeExtendedNbt (WriteView view, CallbackInfo ci) {
+        view.putBoolean(CAN_KNOCKBACK, this.canKnockback);
+        view.putInt(MAX_KNOCKBACK_TIMER, this.maxKnockbackTimer);
+        view.putDouble(KNOCKBACK_STRENGTH, this.knockbackStrength);
+        view.putDouble(KNOCKBACK_RADIUS, this.knockbackRadius);
 
-        nbt.putBoolean(CAN_HEAL, this.canHeal);
-        nbt.putInt(MAX_HEAL_TIMER, this.maxHealTimer);
-        nbt.putFloat(HEAL_AMOUNT, this.healAmount);
-        nbt.putDouble(HEAL_RADIUS, this.healRadius);
+        view.putBoolean(CAN_HEAL, this.canHeal);
+        view.putInt(MAX_HEAL_TIMER, this.maxHealTimer);
+        view.putFloat(HEAL_AMOUNT, this.healAmount);
+        view.putDouble(HEAL_RADIUS, this.healRadius);
 
-        nbt.putBoolean(CAN_BOOST, this.canBoost);
-        nbt.putInt(MAX_BOOST_TIMER, this.maxBoostTimer);
-        nbt.putDouble(BOOST_RADIUS, this.boostRadius);
+        view.putBoolean(CAN_BOOST, this.canBoost);
+        view.putInt(MAX_BOOST_TIMER, this.maxBoostTimer);
+        view.putDouble(BOOST_RADIUS, this.boostRadius);
     }
 
     @Inject(method="serverTick", at=@At(

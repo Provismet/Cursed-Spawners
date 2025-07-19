@@ -1,5 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
+import com.mojang.serialization.Codec;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
 import com.provismet.cursedspawners.utility.CSGamerules;
@@ -20,14 +21,11 @@ import net.minecraft.inventory.LootableInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -45,7 +43,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Mixin(MobSpawnerBlockEntity.class)
 public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements IMixinMobSpawnerBlockEntity, LootableInventory {
@@ -72,43 +69,27 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
 
     @Unique private boolean shouldRandomiseEffects = true;
 
-    @Inject(method="readNbt", at=@At("TAIL"))
-    private void readExtendedNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
-        this.mimicChance = nbt.getDouble(MIMIC_CHANCE, PASSTHROUGH_MIMIC_CHANCE);
-        this.shouldRandomiseEffects = nbt.getBoolean(RANDOMISE, true);
-        this.breakAction = nbt.getString(BREAK_ACTION, SpawnerBreakEffects.NORMAL_BREAK);
+    @Inject(method="readData", at=@At("TAIL"))
+    private void readExtendedNbt (ReadView view, CallbackInfo ci) {
+        this.mimicChance = view.getDouble(MIMIC_CHANCE, PASSTHROUGH_MIMIC_CHANCE);
+        this.shouldRandomiseEffects = view.getBoolean(RANDOMISE, true);
+        this.breakAction = view.getString(BREAK_ACTION, SpawnerBreakEffects.NORMAL_BREAK);
 
-        if (nbt.getList(REFORGE_ACTIONS).isPresent()) {
-            reforgeActions = new ArrayList<>();
-            reforgeActions.addAll(
-                nbt.getList(REFORGE_ACTIONS).get()
-                    .stream()
-                    .map(NbtElement::asString)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .toList()
-            );
-        }
-        else {
-            this.reforgeActions = new ArrayList<>();
-        }
+        view.read(REFORGE_ACTIONS, Codec.STRING.listOf()).ifPresentOrElse(
+            actions -> this.reforgeActions = new ArrayList<>(actions),
+            () -> this.reforgeActions = new ArrayList<>()
+        );
 
-        this.readLootTable(nbt);
+        this.readLootTable(view);
     }
 
-    @Inject(method="writeNbt", at=@At("TAIL"))
-    private void writeExtendedNbt (NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup, CallbackInfo info) {
-        nbt.putDouble(MIMIC_CHANCE, this.mimicChance);
-
-        NbtList actions = new NbtList();
-        for (String action : this.reforgeActions) {
-            actions.add(NbtString.of(action));
-        }
-        nbt.put(REFORGE_ACTIONS, actions);
-        nbt.putString(BREAK_ACTION, this.breakAction);
-        nbt.putBoolean(RANDOMISE, this.shouldRandomiseEffects);
-
-        this.writeLootTable(nbt);
+    @Inject(method="writeData", at=@At("TAIL"))
+    private void writeExtendedNbt (WriteView view, CallbackInfo ci) {
+        view.putDouble(MIMIC_CHANCE, this.mimicChance);
+        view.put(REFORGE_ACTIONS, Codec.STRING.listOf(), this.reforgeActions);
+        view.putString(BREAK_ACTION, this.breakAction);
+        view.putBoolean(RANDOMISE, this.shouldRandomiseEffects);
+        this.writeLootTable(view);
     }
 
     @Override
@@ -124,7 +105,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
     @Inject(method="serverTick", at=@At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState state, MobSpawnerBlockEntity blockEntity, CallbackInfo info) {
         MobSpawnerBlockEntityMixin self = (MobSpawnerBlockEntityMixin)(Object)blockEntity;
-        if (self.shouldRandomiseEffects && self.hasWorld() && world instanceof ServerWorld serverWorld && serverWorld.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get() > 0) {
+        if (self != null && self.shouldRandomiseEffects && self.hasWorld() && world instanceof ServerWorld serverWorld && serverWorld.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get() > 0) {
             self.generateEffects(serverWorld);
             self.markDirty();
         }

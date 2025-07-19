@@ -1,12 +1,13 @@
 package com.provismet.cursedspawners.entity.animation;
 
 import net.minecraft.client.render.entity.animation.Animation;
+import net.minecraft.client.render.entity.animation.AnimationDefinition;
 import net.minecraft.client.render.entity.animation.AnimationHelper;
 import net.minecraft.client.render.entity.animation.Keyframe;
 import net.minecraft.client.render.entity.animation.Transformation;
 
 public class SpawnerMimicAnimations {
-	public static final Animation IDLE = Animation.Builder.create(10.0F).looping()
+	public static final AnimationDefinition IDLE = AnimationDefinition.Builder.create(10.0F).looping()
 		.addBoneAnimation("body", new Transformation(Transformation.Targets.MOVE_ORIGIN,
 			new Keyframe(0.0F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.LINEAR),
 			new Keyframe(5.0F, AnimationHelper.createTranslationalVector(0.0F, 1.0F, 0.0F), Transformation.Interpolations.LINEAR),
@@ -14,7 +15,7 @@ public class SpawnerMimicAnimations {
 		))
 		.build();
 
-	public static final Animation WALK = Animation.Builder.create(2.0F).looping()
+	public static final AnimationDefinition WALK = AnimationDefinition.Builder.create(2.0F).looping()
 		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.25F, AnimationHelper.createRotationalVector(-5.0F, 0.0F, -3.5F), Transformation.Interpolations.CUBIC),
@@ -103,7 +104,7 @@ public class SpawnerMimicAnimations {
 		))
 		.build();
 
-	public static final Animation ATTACK = Animation.Builder.create(0.3333F)
+	public static final AnimationDefinition ATTACK = AnimationDefinition.Builder.create(0.3333F)
 		.addBoneAnimation("body", new Transformation(Transformation.Targets.ROTATE,
 			new Keyframe(0.0F, AnimationHelper.createRotationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.0833F, AnimationHelper.createRotationalVector(5.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC),
@@ -142,7 +143,7 @@ public class SpawnerMimicAnimations {
 		))
 		.build();
 
-	public static final Animation SPAWN = Animation.Builder.create(1.0833F)
+	public static final AnimationDefinition SPAWN = AnimationDefinition.Builder.create(1.0833F)
 		.addBoneAnimation("legNW", new Transformation(Transformation.Targets.MOVE_ORIGIN,
 			new Keyframe(0.25F, AnimationHelper.createTranslationalVector(-3.0F, 0.0F, 2.0F), Transformation.Interpolations.CUBIC),
 			new Keyframe(0.4167F, AnimationHelper.createTranslationalVector(0.0F, 0.0F, 0.0F), Transformation.Interpolations.CUBIC)
