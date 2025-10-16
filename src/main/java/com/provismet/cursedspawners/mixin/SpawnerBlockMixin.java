@@ -74,8 +74,8 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
     protected float calcBlockBreakingDelta (BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
         float scale = super.calcBlockBreakingDelta(state, player, world, pos);
 
-        if (player.getWorld().isClient()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
-        else if (player.getWorld() instanceof ServerWorld serverWorld) scale *= (float)serverWorld.getGameRules().get(CSGamerules.BREAK_SPEED).get();
+        if (player.getEntityWorld().isClient()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
+        else if (player.getEntityWorld() instanceof ServerWorld serverWorld) scale *= (float)serverWorld.getGameRules().get(CSGamerules.BREAK_SPEED).get();
 
         return scale;
     }

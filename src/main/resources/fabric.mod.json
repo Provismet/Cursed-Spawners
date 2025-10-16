@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"homepage": "https://github.com/Provismet/Cursed-Spawners",
-		"sources": "https://github.com/Provismet/Cursed-Spawners"
+		"sources": "https://github.com/Provismet/Cursed-Spawners",
+        "issues": "https://github.com/Provismet/Cursed-Spawners/issues"
 	},
 	"license": "Lily License v1.1",
 	"icon": "assets/cursed-spawners/icon.png",
@@ -31,7 +32,7 @@
 	"accessWidener": "cursed-spawners.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.21.5",
+		"minecraft": "~1.21.9",
 		"java": ">=21",
 		"fabric-api": "*"
 	}

@@ -5,12 +5,12 @@ import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.entity.models.SpawnerMimicModel;
 import com.provismet.cursedspawners.entity.renderers.states.SpawnerMimicRenderState;
 import com.provismet.cursedspawners.registries.client.CSModelLayers;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.MobEntityRenderer;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -18,7 +18,7 @@ import net.minecraft.util.math.RotationAxis;
 public class SpawnerMimicEntityRenderer extends MobEntityRenderer<SpawnerMimicEntity, SpawnerMimicRenderState, SpawnerMimicModel> {
     private static final Identifier TEXTURE = CursedSpawnersMain.identifier("textures/entity/spawner_mimic.png");
 
-    private final EntityRenderDispatcher dispatcher;
+    private final EntityRenderManager dispatcher;
 
     public SpawnerMimicEntityRenderer (EntityRendererFactory.Context context) {
         super(context, new SpawnerMimicModel(context.getPart(CSModelLayers.SPAWNER_MIMIC)), 0.6f);
@@ -36,20 +36,20 @@ public class SpawnerMimicEntityRenderer extends MobEntityRenderer<SpawnerMimicEn
         state.attackState.copyFrom(mimic.attackState);
         state.idleState.copyFrom(mimic.idleState);
         state.spawnState.copyFrom(mimic.spawnState);
-        state.renderedEntity = mimic.getRenderedEntity();
         state.mobRotation = MathHelper.lerp(tickDelta, mimic.getPrevMobRotation(), mimic.getMobRotation());
+        if (mimic.getRenderedEntity() != null) state.renderedEntityState = this.dispatcher.getAndUpdateRenderState(mimic.getRenderedEntity(), tickDelta);
+        else state.renderedEntityState = null;
     }
 
     @Override
-    public void render (SpawnerMimicRenderState state, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
-        super.render(state, matrixStack, vertexConsumerProvider, light);
+    public void render (SpawnerMimicRenderState state, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
+        super.render(state, matrixStack, orderedRenderCommandQueue, cameraRenderState);
 
-        Entity innerEntity = state.renderedEntity;
-        if (innerEntity != null) { // Yoinked from MobSpawnerBlockEntityRenderer
+        if (state.renderedEntityState != null) { // Yoinked from MobSpawnerBlockEntityRenderer
             matrixStack.push();
             matrixStack.translate(0f, 0.25f, 0f);
             float f = 0.53125f;
-            float g = Math.max(innerEntity.getWidth(), innerEntity.getHeight());
+            float g = Math.max(state.renderedEntityState.width, state.renderedEntityState.height);
             if ((double)g > 1.0) {
                 f /= g;
             }
@@ -59,7 +59,7 @@ public class SpawnerMimicEntityRenderer extends MobEntityRenderer<SpawnerMimicEn
             matrixStack.translate(0f, -0.2f, 0f);
             matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-30f));
             matrixStack.scale(f, f, f);
-            this.dispatcher.render(innerEntity, 0.0, 0.0, 0.0, 0f, matrixStack, vertexConsumerProvider, light);
+            this.dispatcher.render(state.renderedEntityState, cameraRenderState, 0, 0, 0, matrixStack, orderedRenderCommandQueue);
             matrixStack.pop();
         }
     }

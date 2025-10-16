@@ -13,6 +13,6 @@ public abstract class AbstractExplanationParticle extends AnimatedParticle {
         this.maxAge = 40;
         this.velocityMultiplier = 0.75f;
         this.scale = 0.25f;
-        this.setSpriteForAge(spriteProvider);
+        this.updateSprite(spriteProvider);
     }
 }

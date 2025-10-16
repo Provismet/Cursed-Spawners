@@ -47,7 +47,7 @@ public abstract class SpawnerBreakEffects {
 
         EFFECTS.put(CURSE, (spawner, world) -> {
             Vec3d centrePos = spawner.getPos().toCenterPos();
-            List<ServerPlayerEntity> playersInRange = world.getPlayers(player -> player.getPos().isWithinRangeOf(centrePos, 8, 8) && !player.isCreative() && !player.isSpectator());
+            List<ServerPlayerEntity> playersInRange = world.getPlayers(player -> player.getEntityPos().isWithinRangeOf(centrePos, 8, 8) && !player.isCreative() && !player.isSpectator());
             for (ServerPlayerEntity player : playersInRange) {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60));
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 2));

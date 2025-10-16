@@ -7,6 +7,7 @@ import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 public class AOEChargingParticle extends FlatParticle {
@@ -49,7 +50,7 @@ public class AOEChargingParticle extends FlatParticle {
 
         @Nullable
         @Override
-        public Particle createParticle (AOEChargingParticleEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        public Particle createParticle (AOEChargingParticleEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Random random) {
             return new AOEChargingParticle(world, x, y, z, this.spriteProvider, parameters);
         }
     }

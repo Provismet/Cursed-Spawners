@@ -7,6 +7,8 @@ import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
+import net.minecraft.util.math.random.Random;
+import org.jetbrains.annotations.Nullable;
 
 public class HealParticle extends AbstractExplanationParticle {
     protected HealParticle (ClientWorld world, double x, double y, double z, SpriteProvider spriteProvider) {
@@ -22,7 +24,7 @@ public class HealParticle extends AbstractExplanationParticle {
         }
 
         @Override
-        public Particle createParticle (SimpleParticleType defaultParticleType, ClientWorld clientWorld, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        public Particle createParticle (SimpleParticleType defaultParticleType, ClientWorld clientWorld, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Random random) {
             return new HealParticle(clientWorld, x, y, z, this.spriteProvider);
         }
     }

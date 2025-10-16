@@ -43,6 +43,7 @@ import net.minecraft.storage.WriteView;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
@@ -77,7 +78,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     public final AnimationState spawnState = new AnimationState();
 
     private static final TrackedData<Boolean> RUNNING_SPAWN_ANIMATION = DataTracker.registerData(SpawnerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<NbtCompound> RENDERED_ENTITY = DataTracker.registerData(SpawnerMimicEntity.class, TrackedDataHandlerRegistry.NBT_COMPOUND);
+    private static final TrackedData<String> RENDERED_ENTITY_TYPE = DataTracker.registerData(SpawnerMimicEntity.class, TrackedDataHandlerRegistry.STRING);
 
     public SpawnerMimicEntity (World world) {
         this(CSEntityTypes.SPAWNER_MIMIC, world);
@@ -116,7 +117,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     protected void initDataTracker (DataTracker.Builder builder) {
         super.initDataTracker(builder);
         builder.add(RUNNING_SPAWN_ANIMATION, false);
-        builder.add(RENDERED_ENTITY, new NbtCompound());
+        builder.add(RENDERED_ENTITY_TYPE, "");
     }
 
     @Override
@@ -174,18 +175,18 @@ public class SpawnerMimicEntity extends HostileEntity {
         this.mobEntryRotation = (this.mobEntryRotation + (double)(1000f / ((float)this.spawnDelay + 200f))) % 360.0;
         this.setupAnimations();
 
-        if (!this.isAiDisabled() && this.getWorld() instanceof ServerWorld serverWorld) {
+        if (!this.isAiDisabled() && this.getEntityWorld() instanceof ServerWorld serverWorld) {
             if (this.spawnDelay < 0) this.updateSpawns();
             if (this.spawnDelay > 0) this.spawnDelay--;
             else this.spawn(serverWorld);
         }
 
-        if (this.getWorld().isClient() && this.getRenderedEntity() != null) {
+        if (this.getEntityWorld().isClient() && this.getRenderedEntity() != null) {
             double x = this.getX() + this.random.nextDouble() - 0.5;
             double y = this.getY() + this.random.nextDouble();
             double z = this.getZ() + this.random.nextDouble() - 0.5;
-            this.getWorld().addParticleClient(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
-            this.getWorld().addParticleClient(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
+            this.getEntityWorld().addParticleClient(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
+            this.getEntityWorld().addParticleClient(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
         }
 
         super.tick();
@@ -202,7 +203,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     @Override
     public boolean tryAttack (ServerWorld world, Entity target) {
-        this.getWorld().sendEntityStatus(this, EntityStatuses.PLAY_ATTACK_SOUND);
+        this.getEntityWorld().sendEntityStatus(this, EntityStatuses.PLAY_ATTACK_SOUND);
         return super.tryAttack(world, target);
     }
 
@@ -255,9 +256,9 @@ public class SpawnerMimicEntity extends HostileEntity {
     protected ActionResult interactMob (PlayerEntity player, Hand hand) {
         ItemStack held = player.getStackInHand(hand);
         if (held.getItem() instanceof SpawnEggItem spawnEgg) {
-            EntityType<?> entityType = spawnEgg.getEntityType(this.getRegistryManager(), held);
+            EntityType<?> entityType = spawnEgg.getEntityType(held);
             this.setEntityType(entityType);
-            this.getWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
+            this.getEntityWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
             held.decrement(1);
             this.spawnDelay = 20;
             return ActionResult.SUCCESS;
@@ -295,10 +296,10 @@ public class SpawnerMimicEntity extends HostileEntity {
                     )
                 );
 
-                if (this.getWorld().isSpaceEmpty(optionalEntityType.get().getSpawnBox(mobPos.getX(), mobPos.getY(), mobPos.getZ()))) {
+                if (this.getEntityWorld().isSpaceEmpty(optionalEntityType.get().getSpawnBox(mobPos.getX(), mobPos.getY(), mobPos.getZ()))) {
                     BlockPos mobBlockPos = BlockPos.ofFloored(mobPos);
                     if (mobSpawnerEntry.getCustomSpawnRules().isPresent()) {
-                        if (!optionalEntityType.get().getSpawnGroup().isPeaceful() && this.getWorld().getDifficulty() == Difficulty.PEACEFUL) {
+                        if (!optionalEntityType.get().getSpawnGroup().isPeaceful() && this.getEntityWorld().getDifficulty() == Difficulty.PEACEFUL) {
                             continue;
                         }
 
@@ -320,7 +321,7 @@ public class SpawnerMimicEntity extends HostileEntity {
                         return;
                     }
 
-                    int nearbyEntityCount = this.getWorld().getEntitiesByType(
+                    int nearbyEntityCount = this.getEntityWorld().getEntitiesByType(
                         TypeFilter.equals(entity.getClass()),
                         new Box(this.getX(), this.getY(), this.getZ(), this.getX() + 1, this.getY() + 1, this.getZ() + 1).expand(this.spawnRange),
                         EntityPredicates.EXCEPT_SPECTATOR
@@ -337,7 +338,7 @@ public class SpawnerMimicEntity extends HostileEntity {
                         }
 
                         if (mobSpawnerEntry.getNbt().getSize() == 1 && mobSpawnerEntry.getNbt().contains("id")) {
-                            ((MobEntity) entity).initialize(serverWorld, serverWorld.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null);
+                            mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null);
                         }
 
                         mobSpawnerEntry.getEquipment().ifPresent(mobEntity::setEquipmentFromTable);
@@ -372,15 +373,16 @@ public class SpawnerMimicEntity extends HostileEntity {
     }
 
     public void setEntityType (EntityType<?> type) {
-        this.getSpawnEntry().getNbt().putString("id", Registries.ENTITY_TYPE.getId(type).toString());
-        this.dataTracker.set(RENDERED_ENTITY, this.getSpawnEntry().getNbt());
+        String idString = Registries.ENTITY_TYPE.getId(type).toString();
+        this.getSpawnEntry().getNbt().putString("id", idString);
+        this.dataTracker.set(RENDERED_ENTITY_TYPE, idString);
         this.renderedEntity = null;
     }
 
     @Nullable
     public Entity getRenderedEntity () {
-        if (this.renderedEntity == null && !this.getRenderedEntityNbt().isEmpty())
-            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityNbt(), this.getWorld(), SpawnReason.SPAWNER, Function.identity());
+        if (this.renderedEntity == null && this.getRenderedEntityType() != null)
+            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityType(), new NbtCompound(), this.getEntityWorld(), SpawnReason.SPAWNER, Function.identity());
 
         return this.renderedEntity;
     }
@@ -395,7 +397,7 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     protected void setSpawnEntry (@Nullable MobSpawnerEntry spawnEntry) {
         this.spawnEntry = spawnEntry;
-        if (spawnEntry != null) this.dataTracker.set(RENDERED_ENTITY, spawnEntry.getNbt());
+        if (spawnEntry != null) this.dataTracker.set(RENDERED_ENTITY_TYPE, spawnEntry.entity().getString("id", ""));
     }
 
     private MobSpawnerEntry getSpawnEntry () {
@@ -413,8 +415,12 @@ public class SpawnerMimicEntity extends HostileEntity {
         return this.getDataTracker().get(RUNNING_SPAWN_ANIMATION);
     }
 
-    public NbtCompound getRenderedEntityNbt () {
-        return this.dataTracker.get(RENDERED_ENTITY);
+    @Nullable
+    public EntityType<?> getRenderedEntityType () {
+        Identifier id = Identifier.tryParse(this.dataTracker.get(RENDERED_ENTITY_TYPE));
+        if (id == null) return null;
+
+        return Registries.ENTITY_TYPE.getOptionalValue(id).orElse(null);
     }
 
     protected static class MimicAttackGoal extends MeleeAttackGoal {
