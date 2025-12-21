@@ -105,7 +105,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
     @Inject(method="serverTick", at=@At("HEAD"))
     private static void tick (World world, BlockPos pos, BlockState state, MobSpawnerBlockEntity blockEntity, CallbackInfo info) {
         MobSpawnerBlockEntityMixin self = (MobSpawnerBlockEntityMixin)(Object)blockEntity;
-        if (self != null && self.shouldRandomiseEffects && self.hasWorld() && world instanceof ServerWorld serverWorld && serverWorld.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get() > 0) {
+        if (self != null && self.shouldRandomiseEffects && self.hasWorld() && world instanceof ServerWorld serverWorld && serverWorld.getGameRules().getValue(CSGamerules.SPAWNER_ACTION_CHANCE) > 0) {
             self.generateEffects(serverWorld);
             self.markDirty();
         }
@@ -117,7 +117,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
         Random random = world.getRandom();
 
         int dangerLevel = 0;
-        double chanceToAddAction = world.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE).get();
+        double chanceToAddAction = world.getGameRules().getValue(CSGamerules.SPAWNER_ACTION_CHANCE);
         while (dangerLevel < 7) {
             if (random.nextDouble() < chanceToAddAction) ++dangerLevel;
             else break;

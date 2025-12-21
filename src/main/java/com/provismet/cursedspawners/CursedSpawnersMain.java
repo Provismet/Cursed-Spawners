@@ -35,7 +35,7 @@ public class CursedSpawnersMain implements ModInitializer {
 		PayloadTypeRegistry.playS2C().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register((networkHandler, packetSender, server) -> {
-			packetSender.sendPacket(new GameRulePayloadS2C((float)server.getOverworld().getGameRules().get(CSGamerules.BREAK_SPEED).get()));
+			packetSender.sendPacket(new GameRulePayloadS2C(server.getOverworld().getGameRules().getValue(CSGamerules.BREAK_SPEED).floatValue()));
 		});
 	}
 }

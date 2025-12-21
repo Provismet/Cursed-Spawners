@@ -17,6 +17,7 @@ import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -108,7 +109,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
             --this.knockbackTimer;
 
             if (this.knockbackTimer == this.maxKnockbackTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.knockbackTimer, Vec3d.unpackRgb(0xE2E2E2).toVector3f()), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.spawnParticles(new AOEChargingParticleEffect(this.knockbackTimer, ColorHelper.toRgbVector(0xE2E2E2)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
             }
             else if (this.knockbackTimer <= 0) {
                 this.knockbackTimer = this.maxKnockbackTimer;
@@ -119,7 +120,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
                     if (strength > 0) {
                         Vec3d velocity = new Vec3d(player.getX() - centrePos.getX(), player.getY() >= pos.getY() ? 0.5 : -0.5, player.getZ() - centrePos.getZ()).normalize().multiply(strength);
                         player.addVelocity(velocity);
-                        player.velocityModified = true;
+                        player.velocityDirty = true;
                     }
                 }
                 world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundCategory.BLOCKS, 1, 1);
@@ -130,7 +131,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
             --this.healTimer;
 
             if (this.healTimer == this.maxHealTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.healTimer, Vec3d.unpackRgb(0x47BC78).toVector3f()), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.spawnParticles(new AOEChargingParticleEffect(this.healTimer, ColorHelper.toRgbVector(0x47BC78)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
             }
             else if (this.healTimer <= 0) {
                 this.healTimer = this.maxHealTimer;
@@ -148,7 +149,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
             --this.boostTimer;
 
             if (this.boostTimer == this.maxBoostTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.boostTimer, Vec3d.unpackRgb(0xFF8459).toVector3f()), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.spawnParticles(new AOEChargingParticleEffect(this.boostTimer, ColorHelper.toRgbVector(0xFF8459)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
             }
             else if (this.boostTimer <= 0) {
                 this.boostTimer = this.maxBoostTimer;

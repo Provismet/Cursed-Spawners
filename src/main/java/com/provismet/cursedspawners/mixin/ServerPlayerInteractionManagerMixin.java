@@ -18,11 +18,14 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Shadow @Final protected ServerPlayerEntity player;
 
-    @Inject(method="tryBreakBlock", at=@At(
-        value="INVOKE",
-        target="Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;",
-        shift = At.Shift.BEFORE),
-        cancellable=true
+    @Inject(
+        method = "tryBreakBlock",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/Block;onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;",
+            shift = At.Shift.BEFORE
+        ),
+        cancellable = true
     )
     private void falseBreak (BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (!this.player.isCreative() && !this.player.isSpectator() && this.world.getBlockEntity(pos) instanceof IMixinMobSpawnerBlockEntity spawnerBlockEntity) {

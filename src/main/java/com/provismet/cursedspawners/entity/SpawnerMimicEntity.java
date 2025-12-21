@@ -10,6 +10,7 @@ import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LoadedEntityProcessor;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
@@ -57,7 +58,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class SpawnerMimicEntity extends HostileEntity {
     private int spawnDelay = 20;
@@ -382,7 +382,7 @@ public class SpawnerMimicEntity extends HostileEntity {
     @Nullable
     public Entity getRenderedEntity () {
         if (this.renderedEntity == null && this.getRenderedEntityType() != null)
-            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityType(), new NbtCompound(), this.getEntityWorld(), SpawnReason.SPAWNER, Function.identity());
+            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityType(), new NbtCompound(), this.getEntityWorld(), SpawnReason.SPAWNER, LoadedEntityProcessor.NOOP);
 
         return this.renderedEntity;
     }

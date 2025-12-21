@@ -1,14 +1,15 @@
 {
-  "required": true,
-  "package": "com.provismet.cursedspawners.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "MobSpawnerBlockEntityMixin",
-    "MobSpawnerLogicMixin",
-    "ServerPlayerInteractionManagerMixin",
-    "SpawnerBlockMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "package": "com.provismet.cursedspawners.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "MinecraftServerMixin",
+        "MobSpawnerBlockEntityMixin",
+        "MobSpawnerLogicMixin",
+        "ServerPlayerInteractionManagerMixin",
+        "SpawnerBlockMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }

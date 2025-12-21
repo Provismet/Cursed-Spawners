@@ -39,7 +39,7 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
         state = super.onBreak(world, pos, state, player);
         if (player.isCreative() || !(world instanceof ServerWorld serverWorld)) return state;
 
-        double worldMimicChance = serverWorld.getGameRules().get(CSGamerules.MIMIC_CHANCE).get();
+        double worldMimicChance = serverWorld.getGameRules().getValue(CSGamerules.MIMIC_CHANCE);
         if (worldMimicChance >= 0 && world.getBlockEntity(pos) instanceof MobSpawnerBlockEntity blockEntity) {
             double blockMimicChance;
             if (((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$useWorldMimicChance()) blockMimicChance = worldMimicChance;
@@ -75,7 +75,7 @@ public abstract class SpawnerBlockMixin extends BlockWithEntity {
         float scale = super.calcBlockBreakingDelta(state, player, world, pos);
 
         if (player.getEntityWorld().isClient()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
-        else if (player.getEntityWorld() instanceof ServerWorld serverWorld) scale *= (float)serverWorld.getGameRules().get(CSGamerules.BREAK_SPEED).get();
+        else if (player.getEntityWorld() instanceof ServerWorld serverWorld) scale *= serverWorld.getGameRules().getValue(CSGamerules.BREAK_SPEED).floatValue();
 
         return scale;
     }

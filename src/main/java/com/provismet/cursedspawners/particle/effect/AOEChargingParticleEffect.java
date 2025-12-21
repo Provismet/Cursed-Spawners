@@ -9,9 +9,9 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.util.dynamic.Codecs;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public record AOEChargingParticleEffect (int maxAge, Vector3f colour) implements ParticleEffect {
+public record AOEChargingParticleEffect (int maxAge, Vector3fc colour) implements ParticleEffect {
     public static final MapCodec<AOEChargingParticleEffect> CODEC = RecordCodecBuilder.mapCodec(
         instance -> instance.group(
             Codecs.POSITIVE_INT.fieldOf("duration").forGetter(AOEChargingParticleEffect::maxAge),
