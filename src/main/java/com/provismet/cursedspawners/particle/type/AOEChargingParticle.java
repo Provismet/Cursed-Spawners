@@ -2,55 +2,55 @@ package com.provismet.cursedspawners.particle.type;
 
 import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
 import com.provismet.lilylib.particle.FlatParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.SpriteProvider;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 public class AOEChargingParticle extends FlatParticle {
     private float prevScale;
     private final float maxScale;
 
-    protected AOEChargingParticle (ClientWorld clientWorld, double x, double y, double z, SpriteProvider spriteProvider, AOEChargingParticleEffect effect) {
+    protected AOEChargingParticle (ClientLevel clientWorld, double x, double y, double z, SpriteSet spriteProvider, AOEChargingParticleEffect effect) {
         super(clientWorld, x, y, z, spriteProvider);
-        this.scale = 3f;
-        this.maxScale = this.scale;
-        this.prevScale = this.scale;
-        this.maxAge = effect.maxAge();
+        this.quadSize = 3f;
+        this.maxScale = this.quadSize;
+        this.prevScale = this.quadSize;
+        this.lifetime = effect.maxAge();
         this.alpha = 0;
-        this.red = effect.colour().x();
-        this.green = effect.colour().y();
-        this.blue = effect.colour().z();
+        this.rCol = effect.colour().x();
+        this.gCol = effect.colour().y();
+        this.bCol = effect.colour().z();
     }
 
     @Override
     public void tick () {
         super.tick();
-        this.prevScale = this.scale;
-        this.scale = this.maxScale * (1 - (float)this.age / (float)this.maxAge);
+        this.prevScale = this.quadSize;
+        this.quadSize = this.maxScale * (1 - (float)this.age / (float)this.lifetime);
 
         if (this.alpha < 1) this.alpha += 0.1f;
         if (this.alpha > 1) this.alpha = 1f;
     }
 
     @Override
-    public float getSize (float tickDelta) {
-        return MathHelper.lerp(tickDelta, this.prevScale, this.scale);
+    public float getQuadSize (float tickDelta) {
+        return Mth.lerp(tickDelta, this.prevScale, this.quadSize);
     }
 
-    public static class Factory implements ParticleFactory<AOEChargingParticleEffect> {
-        private final SpriteProvider spriteProvider;
+    public static class Factory implements ParticleProvider<AOEChargingParticleEffect> {
+        private final SpriteSet spriteProvider;
 
-        public Factory (SpriteProvider spriteProvider) {
+        public Factory (SpriteSet spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
         @Nullable
         @Override
-        public Particle createParticle (AOEChargingParticleEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, Random random) {
+        public Particle createParticle (AOEChargingParticleEffect parameters, ClientLevel world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, RandomSource random) {
             return new AOEChargingParticle(world, x, y, z, this.spriteProvider, parameters);
         }
     }

@@ -7,12 +7,12 @@ import com.provismet.cursedspawners.registries.CSParticleTypes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
 @Environment(EnvType.CLIENT)
 public abstract class CSParticleFactories {
-    private static <T extends ParticleEffect> void register (ParticleType<T> particle, ParticleFactoryRegistry.PendingParticleFactory<T> constructor) {
+    private static <T extends ParticleOptions> void register (ParticleType<T> particle, ParticleFactoryRegistry.PendingParticleFactory<T> constructor) {
         ParticleFactoryRegistry.getInstance().register(particle, constructor);
     }
 

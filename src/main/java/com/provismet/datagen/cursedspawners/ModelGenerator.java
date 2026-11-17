@@ -3,9 +3,9 @@ package com.provismet.datagen.cursedspawners;
 import com.provismet.cursedspawners.registries.CSItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.client.data.BlockStateModelGenerator;
-import net.minecraft.client.data.ItemModelGenerator;
-import net.minecraft.client.data.Models;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.model.ModelTemplates;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator (FabricDataOutput output) {
@@ -13,12 +13,12 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     @Override
-    public void generateBlockStateModels (BlockStateModelGenerator blockStateModelGenerator) {
+    public void generateBlockStateModels (BlockModelGenerators blockStateModelGenerator) {
 
     }
 
     @Override
-    public void generateItemModels (ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(CSItems.MIMIC_SPAWN_EGG, Models.GENERATED);
+    public void generateItemModels (ItemModelGenerators itemModelGenerator) {
+        itemModelGenerator.generateFlatItem(CSItems.MIMIC_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
     }
 }

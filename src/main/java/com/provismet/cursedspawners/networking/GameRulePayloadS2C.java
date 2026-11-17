@@ -1,21 +1,21 @@
 package com.provismet.cursedspawners.networking;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record GameRulePayloadS2C (float value) implements CustomPayload {
-    public static final Id<GameRulePayloadS2C> ID = new Id<>(CursedSpawnersMain.identifier("spawner_mining_speed"));
-    public static final PacketCodec<PacketByteBuf, GameRulePayloadS2C> CODEC = PacketCodec.tuple(
-        PacketCodecs.FLOAT,
+public record GameRulePayloadS2C (float value) implements CustomPacketPayload {
+    public static final Type<GameRulePayloadS2C> ID = new Type<>(CursedSpawnersMain.identifier("spawner_mining_speed"));
+    public static final StreamCodec<FriendlyByteBuf, GameRulePayloadS2C> CODEC = StreamCodec.composite(
+        ByteBufCodecs.FLOAT,
         GameRulePayloadS2C::value,
         GameRulePayloadS2C::new
     );
 
     @Override
-    public Id<? extends CustomPayload> getId () {
+    public Type<? extends CustomPacketPayload> type () {
         return ID;
     }
 }

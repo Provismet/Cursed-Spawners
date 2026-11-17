@@ -3,66 +3,66 @@ package com.provismet.cursedspawners.entity;
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSEntityTypes;
 import com.provismet.cursedspawners.registries.CSSoundEvents;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.spawner.MobSpawnerEntry;
-import net.minecraft.entity.AnimationState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LoadedEntityProcessor;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
-import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypeFilter;
-import net.minecraft.util.collection.Pool;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldEvents;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.EntityProcessor;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.SpawnData;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class SpawnerMimicEntity extends HostileEntity {
+public class SpawnerMimicEntity extends Monster {
     private int spawnDelay = 20;
-    private Pool<MobSpawnerEntry> spawnPotentials = Pool.empty();
-    private MobSpawnerEntry spawnEntry;
+    private WeightedList<SpawnData> spawnPotentials = WeightedList.of();
+    private SpawnData spawnEntry;
     private double mobEntryRotation;
     private double prevMobEntryRotation;
     private int minSpawnDelay = 200;
@@ -77,79 +77,79 @@ public class SpawnerMimicEntity extends HostileEntity {
     public final AnimationState attackState = new AnimationState();
     public final AnimationState spawnState = new AnimationState();
 
-    private static final TrackedData<Boolean> RUNNING_SPAWN_ANIMATION = DataTracker.registerData(SpawnerMimicEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private static final TrackedData<String> RENDERED_ENTITY_TYPE = DataTracker.registerData(SpawnerMimicEntity.class, TrackedDataHandlerRegistry.STRING);
+    private static final EntityDataAccessor<Boolean> RUNNING_SPAWN_ANIMATION = SynchedEntityData.defineId(SpawnerMimicEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<String> RENDERED_ENTITY_TYPE = SynchedEntityData.defineId(SpawnerMimicEntity.class, EntityDataSerializers.STRING);
 
-    public SpawnerMimicEntity (World world) {
+    public SpawnerMimicEntity (Level world) {
         this(CSEntityTypes.SPAWNER_MIMIC, world);
     }
 
-    public SpawnerMimicEntity (EntityType<? extends SpawnerMimicEntity> entityType, World world) {
+    public SpawnerMimicEntity (EntityType<? extends SpawnerMimicEntity> entityType, Level world) {
         super(entityType, world);
-        this.experiencePoints = 30;
+        this.xpReward = 30;
     }
 
-    public static DefaultAttributeContainer.Builder getSpawnerMimicAttributes () {
-        return HostileEntity.createHostileAttributes()
-            .add(EntityAttributes.MAX_HEALTH, 10)
-            .add(EntityAttributes.KNOCKBACK_RESISTANCE, 0.8)
-            .add(EntityAttributes.ARMOR, 25)
-            .add(EntityAttributes.ARMOR_TOUGHNESS, 5)
-            .add(EntityAttributes.MOVEMENT_SPEED, 0.275)
-            .add(EntityAttributes.ATTACK_DAMAGE, 2)
-            .add(EntityAttributes.ATTACK_KNOCKBACK, 1);
-    }
-
-    @Override
-    protected void initGoals () {
-        super.initGoals();
-        this.targetSelector.add(0, new RevengeGoal(this));
-        this.targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
-
-        this.goalSelector.add(0, new MimicAppearGoal(this));
-        this.goalSelector.add(1, new MimicAttackGoal(this, 1, false));
-        this.goalSelector.add(2, new WanderAroundFarGoal(this, 1));
-        this.goalSelector.add(3, new LookAtEntityGoal(this, PlayerEntity.class, 16));
-        this.goalSelector.add(4, new LookAroundGoal(this));
+    public static AttributeSupplier.Builder getSpawnerMimicAttributes () {
+        return Monster.createMonsterAttributes()
+            .add(Attributes.MAX_HEALTH, 10)
+            .add(Attributes.KNOCKBACK_RESISTANCE, 0.8)
+            .add(Attributes.ARMOR, 25)
+            .add(Attributes.ARMOR_TOUGHNESS, 5)
+            .add(Attributes.MOVEMENT_SPEED, 0.275)
+            .add(Attributes.ATTACK_DAMAGE, 2)
+            .add(Attributes.ATTACK_KNOCKBACK, 1);
     }
 
     @Override
-    protected void initDataTracker (DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(RUNNING_SPAWN_ANIMATION, false);
-        builder.add(RENDERED_ENTITY_TYPE, "");
+    protected void registerGoals () {
+        super.registerGoals();
+        this.targetSelector.addGoal(0, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+
+        this.goalSelector.addGoal(0, new MimicAppearGoal(this));
+        this.goalSelector.addGoal(1, new MimicAttackGoal(this, 1, false));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 16));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
     }
 
     @Override
-    public void onSpawnPacket (EntitySpawnS2CPacket packet) {
-        super.onSpawnPacket(packet);
-        this.spawnState.start(this.age);
+    protected void defineSynchedData (SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(RUNNING_SPAWN_ANIMATION, false);
+        builder.define(RENDERED_ENTITY_TYPE, "");
+    }
+
+    @Override
+    public void recreateFromPacket (ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        this.spawnState.start(this.tickCount);
         this.setRunningSpawnAnimation(true);
     }
 
     @Override
-    protected void readCustomData (ReadView view) {
-        super.readCustomData(view);
+    protected void readAdditionalSaveData (ValueInput view) {
+        super.readAdditionalSaveData(view);
 
-        this.spawnDelay = view.getShort("Delay", (short)20);
-        view.read("SpawnData", MobSpawnerEntry.CODEC).ifPresent(this::setSpawnEntry);
-        view.read("SpawnPotentials", MobSpawnerEntry.DATA_POOL_CODEC).ifPresentOrElse(
+        this.spawnDelay = view.getShortOr("Delay", (short)20);
+        view.read("SpawnData", SpawnData.CODEC).ifPresent(this::setSpawnEntry);
+        view.read("SpawnPotentials", SpawnData.LIST_CODEC).ifPresentOrElse(
             potentials -> this.spawnPotentials = potentials,
-            () -> this.spawnPotentials = Pool.of(this.spawnEntry != null ? this.spawnEntry : new MobSpawnerEntry())
+            () -> this.spawnPotentials = WeightedList.of(this.spawnEntry != null ? this.spawnEntry : new SpawnData())
         );
-        this.minSpawnDelay = view.getShort("MinSpawnDelay", (short)this.minSpawnDelay);
-        this.maxSpawnDelay = view.getShort("MaxSpawnDelay", (short)this.maxSpawnDelay);
-        this.spawnCount = view.getShort("SpawnCount", (short)this.spawnCount);
-        this.maxNearbyEntities = view.getShort("MaxNearbyEntities", (short)this.maxNearbyEntities);
-        this.requiredPlayerRange = view.getShort("RequiredPlayerRange", (short)this.requiredPlayerRange);
-        this.spawnRange = view.getShort("SpawnRange", (short)this.spawnRange);
+        this.minSpawnDelay = view.getShortOr("MinSpawnDelay", (short)this.minSpawnDelay);
+        this.maxSpawnDelay = view.getShortOr("MaxSpawnDelay", (short)this.maxSpawnDelay);
+        this.spawnCount = view.getShortOr("SpawnCount", (short)this.spawnCount);
+        this.maxNearbyEntities = view.getShortOr("MaxNearbyEntities", (short)this.maxNearbyEntities);
+        this.requiredPlayerRange = view.getShortOr("RequiredPlayerRange", (short)this.requiredPlayerRange);
+        this.spawnRange = view.getShortOr("SpawnRange", (short)this.spawnRange);
 
         this.renderedEntity = null;
     }
 
     @Override
-    protected void writeCustomData (WriteView view) {
-        super.writeCustomData(view);
+    protected void addAdditionalSaveData (ValueOutput view) {
+        super.addAdditionalSaveData(view);
         view.putShort("Delay", (short)this.spawnDelay);
         view.putShort("MinSpawnDelay", (short)this.minSpawnDelay);
         view.putShort("MaxSpawnDelay", (short)this.maxSpawnDelay);
@@ -158,15 +158,15 @@ public class SpawnerMimicEntity extends HostileEntity {
         view.putShort("RequiredPlayerRange", (short)this.requiredPlayerRange);
         view.putShort("SpawnRange", (short)this.spawnRange);
         if (this.spawnEntry != null) {
-            view.put("SpawnData", MobSpawnerEntry.CODEC, this.spawnEntry);
+            view.store("SpawnData", SpawnData.CODEC, this.spawnEntry);
         }
 
-        view.put("SpawnPotentials", MobSpawnerEntry.DATA_POOL_CODEC, this.spawnPotentials);
+        view.store("SpawnPotentials", SpawnData.LIST_CODEC, this.spawnPotentials);
     }
 
     @Override
-    public void onTrackedDataSet (TrackedData<?> data) {
-        super.onTrackedDataSet(data);
+    public void onSyncedDataUpdated (EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
     }
 
     @Override
@@ -175,61 +175,61 @@ public class SpawnerMimicEntity extends HostileEntity {
         this.mobEntryRotation = (this.mobEntryRotation + (double)(1000f / ((float)this.spawnDelay + 200f))) % 360.0;
         this.setupAnimations();
 
-        if (!this.isAiDisabled() && this.getEntityWorld() instanceof ServerWorld serverWorld) {
+        if (!this.isNoAi() && this.level() instanceof ServerLevel serverWorld) {
             if (this.spawnDelay < 0) this.updateSpawns();
             if (this.spawnDelay > 0) this.spawnDelay--;
             else this.spawn(serverWorld);
         }
 
-        if (this.getEntityWorld().isClient() && this.getRenderedEntity() != null) {
+        if (this.level().isClientSide() && this.getRenderedEntity() != null) {
             double x = this.getX() + this.random.nextDouble() - 0.5;
             double y = this.getY() + this.random.nextDouble();
             double z = this.getZ() + this.random.nextDouble() - 0.5;
-            this.getEntityWorld().addParticleClient(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
-            this.getEntityWorld().addParticleClient(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
+            this.level().addParticle(ParticleTypes.SMOKE, x, y, z, 0.0, 0.0, 0.0);
+            this.level().addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
         }
 
         super.tick();
     }
 
     private void setupAnimations () {
-        if (!this.isNavigating()) this.idleState.startIfNotRunning(this.age);
+        if (!this.isPathFinding()) this.idleState.startIfStopped(this.tickCount);
         else this.idleState.stop();
 
-        if (this.isRunningSpawnAnimation()) this.spawnState.startIfNotRunning(this.age);
+        if (this.isRunningSpawnAnimation()) this.spawnState.startIfStopped(this.tickCount);
 
-        if (!this.isAttacking()) this.attackState.stop();
+        if (!this.isAggressive()) this.attackState.stop();
     }
 
     @Override
-    public boolean tryAttack (ServerWorld world, Entity target) {
-        this.getEntityWorld().sendEntityStatus(this, EntityStatuses.PLAY_ATTACK_SOUND);
-        return super.tryAttack(world, target);
+    public boolean doHurtTarget (ServerLevel world, Entity target) {
+        this.level().broadcastEntityEvent(this, EntityEvent.START_ATTACKING);
+        return super.doHurtTarget(world, target);
     }
 
     @Override
-    public void handleStatus (byte status) {
-        super.handleStatus(status);
-        if (status == EntityStatuses.PLAY_ATTACK_SOUND) {
-            this.attackState.start(this.age);
+    public void handleEntityEvent (byte status) {
+        super.handleEntityEvent(status);
+        if (status == EntityEvent.START_ATTACKING) {
+            this.attackState.start(this.tickCount);
         }
     }
 
     @Override
-    public boolean isCollidable (@Nullable Entity entity) {
+    public boolean canBeCollidedWith (@Nullable Entity entity) {
         return this.isAlive();
     }
 
     @Override
-    public void slowMovement (BlockState state, Vec3d multiplier) {
-        if (!state.isOf(Blocks.COBWEB)) {
-            super.slowMovement(state, multiplier);
+    public void makeStuckInBlock (BlockState state, Vec3 multiplier) {
+        if (!state.is(Blocks.COBWEB)) {
+            super.makeStuckInBlock(state, multiplier);
         }
     }
 
     @Override
     protected void playAttackSound () {
-        this.playSound(CSSoundEvents.ENTITY_MIMIC_ATTACK);
+        this.makeSound(CSSoundEvents.ENTITY_MIMIC_ATTACK);
     }
 
     @Override
@@ -249,70 +249,70 @@ public class SpawnerMimicEntity extends HostileEntity {
 
     @Override
     protected void playStepSound (BlockPos pos, BlockState state) {
-        this.playSound(CSSoundEvents.ENTITY_MIMIC_STEP);
+        this.makeSound(CSSoundEvents.ENTITY_MIMIC_STEP);
     }
 
     @Override
-    protected ActionResult interactMob (PlayerEntity player, Hand hand) {
-        ItemStack held = player.getStackInHand(hand);
+    protected InteractionResult mobInteract (Player player, InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
         if (held.getItem() instanceof SpawnEggItem spawnEgg) {
-            EntityType<?> entityType = spawnEgg.getEntityType(held);
+            EntityType<?> entityType = spawnEgg.getType(held);
             this.setEntityType(entityType);
-            this.getEntityWorld().emitGameEvent(player, GameEvent.ENTITY_INTERACT, this.getBlockPos());
-            held.decrement(1);
+            this.level().gameEvent(player, GameEvent.ENTITY_INTERACT, this.blockPosition());
+            held.shrink(1);
             this.spawnDelay = 20;
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         else {
-            return super.interactMob(player, hand);
+            return super.mobInteract(player, hand);
         }
     }
 
     @Override
-    protected ActionResult interactWithItem (PlayerEntity player, Hand hand) {
-        ItemStack held = player.getStackInHand(hand);
-        if (held.getItem() instanceof SpawnEggItem) return ActionResult.PASS;
-        return super.interactWithItem(player, hand);
+    protected InteractionResult checkAndHandleImportantInteractions (Player player, InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
+        if (held.getItem() instanceof SpawnEggItem) return InteractionResult.PASS;
+        return super.checkAndHandleImportantInteractions(player, hand);
     }
 
-    protected void spawn (ServerWorld serverWorld) {
+    protected void spawn (ServerLevel serverWorld) {
         boolean spawnedSuccessfully = false;
-        MobSpawnerEntry mobSpawnerEntry = this.getSpawnEntry();
+        SpawnData mobSpawnerEntry = this.getSpawnEntry();
 
         for (int i = 0; i < this.spawnCount; i++) {
-            try (ErrorReporter.Logging logging = new ErrorReporter.Logging(this::toString, CursedSpawnersMain.LOGGER)) {
-                ReadView readView = NbtReadView.create(logging, serverWorld.getRegistryManager(), mobSpawnerEntry.getNbt());
-                Optional<EntityType<?>> optionalEntityType = EntityType.fromData(readView);
+            try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(this::toString, CursedSpawnersMain.LOGGER)) {
+                ValueInput readView = TagValueInput.create(logging, serverWorld.registryAccess(), mobSpawnerEntry.getEntityToSpawn());
+                Optional<EntityType<?>> optionalEntityType = EntityType.by(readView);
                 if (optionalEntityType.isEmpty()) {
                     this.updateSpawns();
                     return;
                 }
 
-                Vec3d mobPos = readView.read("Pos", Vec3d.CODEC).orElseGet(
-                    () -> new Vec3d(
+                Vec3 mobPos = readView.read("Pos", Vec3.CODEC).orElseGet(
+                    () -> new Vec3(
                         this.getX() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5,
                         this.getY() + random.nextInt(3) - 1,
                         this.getZ() + (random.nextDouble() - random.nextDouble()) * this.spawnRange + 0.5
                     )
                 );
 
-                if (this.getEntityWorld().isSpaceEmpty(optionalEntityType.get().getSpawnBox(mobPos.getX(), mobPos.getY(), mobPos.getZ()))) {
-                    BlockPos mobBlockPos = BlockPos.ofFloored(mobPos);
+                if (this.level().noCollision(optionalEntityType.get().getSpawnAABB(mobPos.x(), mobPos.y(), mobPos.z()))) {
+                    BlockPos mobBlockPos = BlockPos.containing(mobPos);
                     if (mobSpawnerEntry.getCustomSpawnRules().isPresent()) {
-                        if (!optionalEntityType.get().getSpawnGroup().isPeaceful() && this.getEntityWorld().getDifficulty() == Difficulty.PEACEFUL) {
+                        if (!optionalEntityType.get().getCategory().isFriendly() && this.level().getDifficulty() == Difficulty.PEACEFUL) {
                             continue;
                         }
 
-                        MobSpawnerEntry.CustomSpawnRules customSpawnRules = mobSpawnerEntry.getCustomSpawnRules().get();
-                        if (!customSpawnRules.canSpawn(mobBlockPos, serverWorld)) {
+                        SpawnData.CustomSpawnRules customSpawnRules = mobSpawnerEntry.getCustomSpawnRules().get();
+                        if (!customSpawnRules.isValidPosition(mobBlockPos, serverWorld)) {
                             continue;
                         }
-                    } else if (!SpawnRestriction.canSpawn(optionalEntityType.get(), serverWorld, SpawnReason.SPAWNER, mobBlockPos, this.getRandom())) {
+                    } else if (!SpawnPlacements.checkSpawnRules(optionalEntityType.get(), serverWorld, EntitySpawnReason.SPAWNER, mobBlockPos, this.getRandom())) {
                         continue;
                     }
 
-                    Entity entity = EntityType.loadEntityWithPassengers(readView, serverWorld, SpawnReason.SPAWNER, entityx -> {
-                        entityx.refreshPositionAndAngles(mobPos.getX(), mobPos.getY(), mobPos.getZ(), entityx.getYaw(), entityx.getPitch());
+                    Entity entity = EntityType.loadEntityRecursive(readView, serverWorld, EntitySpawnReason.SPAWNER, entityx -> {
+                        entityx.snapTo(mobPos.x(), mobPos.y(), mobPos.z(), entityx.getYRot(), entityx.getXRot());
                         return entityx;
                     });
 
@@ -321,38 +321,38 @@ public class SpawnerMimicEntity extends HostileEntity {
                         return;
                     }
 
-                    int nearbyEntityCount = this.getEntityWorld().getEntitiesByType(
-                        TypeFilter.equals(entity.getClass()),
-                        new Box(this.getX(), this.getY(), this.getZ(), this.getX() + 1, this.getY() + 1, this.getZ() + 1).expand(this.spawnRange),
-                        EntityPredicates.EXCEPT_SPECTATOR
+                    int nearbyEntityCount = this.level().getEntities(
+                        EntityTypeTest.forExactClass(entity.getClass()),
+                        new AABB(this.getX(), this.getY(), this.getZ(), this.getX() + 1, this.getY() + 1, this.getZ() + 1).inflate(this.spawnRange),
+                        EntitySelector.NO_SPECTATORS
                     ).size();
                     if (nearbyEntityCount >= this.maxNearbyEntities) {
                         this.updateSpawns();
                         return;
                     }
 
-                    entity.refreshPositionAndAngles(entity.getX(), entity.getY(), entity.getZ(), this.random.nextFloat() * 360.0F, 0.0F);
-                    if (entity instanceof MobEntity mobEntity) {
-                        if (mobSpawnerEntry.getCustomSpawnRules().isEmpty() && !mobEntity.canSpawn(serverWorld, SpawnReason.SPAWNER) || !mobEntity.canSpawn(serverWorld)) {
+                    entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), this.random.nextFloat() * 360.0F, 0.0F);
+                    if (entity instanceof Mob mobEntity) {
+                        if (mobSpawnerEntry.getCustomSpawnRules().isEmpty() && !mobEntity.checkSpawnRules(serverWorld, EntitySpawnReason.SPAWNER) || !mobEntity.checkSpawnObstruction(serverWorld)) {
                             continue;
                         }
 
-                        if (mobSpawnerEntry.getNbt().getSize() == 1 && mobSpawnerEntry.getNbt().contains("id")) {
-                            mobEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(entity.getBlockPos()), SpawnReason.SPAWNER, null);
+                        if (mobSpawnerEntry.getEntityToSpawn().size() == 1 && mobSpawnerEntry.getEntityToSpawn().contains("id")) {
+                            mobEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(entity.blockPosition()), EntitySpawnReason.SPAWNER, null);
                         }
 
-                        mobSpawnerEntry.getEquipment().ifPresent(mobEntity::setEquipmentFromTable);
+                        mobSpawnerEntry.getEquipment().ifPresent(mobEntity::equip);
                     }
 
-                    if (!serverWorld.spawnNewEntityAndPassengers(entity)) {
+                    if (!serverWorld.tryAddFreshEntityWithPassengers(entity)) {
                         this.updateSpawns();
                         return;
                     }
 
-                    serverWorld.syncWorldEvent(WorldEvents.SPAWNER_SPAWNS_MOB, this.getBlockPos(), 0);
-                    serverWorld.emitGameEvent(entity, GameEvent.ENTITY_PLACE, mobBlockPos);
-                    if (entity instanceof MobEntity mobEntity) {
-                        mobEntity.playSpawnEffects();
+                    serverWorld.levelEvent(LevelEvent.PARTICLES_MOBBLOCK_SPAWN, this.blockPosition(), 0);
+                    serverWorld.gameEvent(entity, GameEvent.ENTITY_PLACE, mobBlockPos);
+                    if (entity instanceof Mob mobEntity) {
+                        mobEntity.spawnAnim();
                     }
 
                     spawnedSuccessfully = true;
@@ -369,20 +369,20 @@ public class SpawnerMimicEntity extends HostileEntity {
         if (this.maxSpawnDelay <= this.minSpawnDelay) this.spawnDelay = this.minSpawnDelay;
         else this.spawnDelay = this.minSpawnDelay + this.random.nextInt(this.maxSpawnDelay - this.minSpawnDelay);
 
-        this.spawnPotentials.getOrEmpty(this.random).ifPresent(this::setSpawnEntry);
+        this.spawnPotentials.getRandom(this.random).ifPresent(this::setSpawnEntry);
     }
 
     public void setEntityType (EntityType<?> type) {
-        String idString = Registries.ENTITY_TYPE.getId(type).toString();
-        this.getSpawnEntry().getNbt().putString("id", idString);
-        this.dataTracker.set(RENDERED_ENTITY_TYPE, idString);
+        String idString = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
+        this.getSpawnEntry().getEntityToSpawn().putString("id", idString);
+        this.entityData.set(RENDERED_ENTITY_TYPE, idString);
         this.renderedEntity = null;
     }
 
     @Nullable
     public Entity getRenderedEntity () {
         if (this.renderedEntity == null && this.getRenderedEntityType() != null)
-            this.renderedEntity = EntityType.loadEntityWithPassengers(this.getRenderedEntityType(), new NbtCompound(), this.getEntityWorld(), SpawnReason.SPAWNER, LoadedEntityProcessor.NOOP);
+            this.renderedEntity = EntityType.loadEntityRecursive(this.getRenderedEntityType(), new CompoundTag(), this.level(), EntitySpawnReason.SPAWNER, EntityProcessor.NOP);
 
         return this.renderedEntity;
     }
@@ -395,32 +395,32 @@ public class SpawnerMimicEntity extends HostileEntity {
         return this.prevMobEntryRotation;
     }
 
-    protected void setSpawnEntry (@Nullable MobSpawnerEntry spawnEntry) {
+    protected void setSpawnEntry (@Nullable SpawnData spawnEntry) {
         this.spawnEntry = spawnEntry;
-        if (spawnEntry != null) this.dataTracker.set(RENDERED_ENTITY_TYPE, spawnEntry.entity().getString("id", ""));
+        if (spawnEntry != null) this.entityData.set(RENDERED_ENTITY_TYPE, spawnEntry.entityToSpawn().getStringOr("id", ""));
     }
 
-    private MobSpawnerEntry getSpawnEntry () {
+    private SpawnData getSpawnEntry () {
         if (this.spawnEntry == null) {
-            this.setSpawnEntry(this.spawnPotentials.getOrEmpty(this.random).orElseGet(MobSpawnerEntry::new));
+            this.setSpawnEntry(this.spawnPotentials.getRandom(this.random).orElseGet(SpawnData::new));
         }
         return this.spawnEntry;
     }
 
     public void setRunningSpawnAnimation (boolean value) {
-        this.getDataTracker().set(RUNNING_SPAWN_ANIMATION, value);
+        this.getEntityData().set(RUNNING_SPAWN_ANIMATION, value);
     }
 
     public boolean isRunningSpawnAnimation () {
-        return this.getDataTracker().get(RUNNING_SPAWN_ANIMATION);
+        return this.getEntityData().get(RUNNING_SPAWN_ANIMATION);
     }
 
     @Nullable
     public EntityType<?> getRenderedEntityType () {
-        Identifier id = Identifier.tryParse(this.dataTracker.get(RENDERED_ENTITY_TYPE));
+        Identifier id = Identifier.tryParse(this.entityData.get(RENDERED_ENTITY_TYPE));
         if (id == null) return null;
 
-        return Registries.ENTITY_TYPE.getOptionalValue(id).orElse(null);
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
     }
 
     protected static class MimicAttackGoal extends MeleeAttackGoal {
@@ -436,17 +436,17 @@ public class SpawnerMimicEntity extends HostileEntity {
 
         public MimicAppearGoal (SpawnerMimicEntity mob) {
             this.self = mob;
-            this.setControls(EnumSet.of(Control.MOVE, Control.LOOK, Control.JUMP, Control.TARGET));
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
         }
 
         @Override
-        public boolean canStart () {
+        public boolean canUse () {
             return this.startingAge == INITIAL_AGE || this.self.isRunningSpawnAnimation();
         }
 
         @Override
         public void start () {
-            this.startingAge = this.self.age;
+            this.startingAge = this.self.tickCount;
         }
 
         @Override
@@ -455,8 +455,8 @@ public class SpawnerMimicEntity extends HostileEntity {
         }
 
         @Override
-        public boolean shouldContinue () {
-            return this.self.age <= this.startingAge + 40;
+        public boolean canContinueToUse () {
+            return this.self.tickCount <= this.startingAge + 40;
         }
     }
 }

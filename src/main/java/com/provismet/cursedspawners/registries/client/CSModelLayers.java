@@ -3,10 +3,10 @@ package com.provismet.cursedspawners.registries.client;
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.models.SpawnerMimicModel;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class CSModelLayers {
-    public static final EntityModelLayer SPAWNER_MIMIC = new EntityModelLayer(CursedSpawnersMain.identifier("spawner_mimic"), "main");
+    public static final ModelLayerLocation SPAWNER_MIMIC = new ModelLayerLocation(CursedSpawnersMain.identifier("spawner_mimic"), "main");
 
     public static void register () {
         EntityModelLayerRegistry.registerModelLayer(SPAWNER_MIMIC, SpawnerMimicModel::getTexturedModelData);

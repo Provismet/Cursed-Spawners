@@ -4,22 +4,6 @@ import com.provismet.cursedspawners.imixin.IMixinMobSpawnerLogic;
 import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import com.provismet.cursedspawners.registries.CSSoundEvents;
-import net.minecraft.block.spawner.MobSpawnerLogic;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,8 +11,24 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
-@Mixin(MobSpawnerLogic.class)
+@Mixin(BaseSpawner.class)
 public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
     @Unique private static final String CAN_KNOCKBACK = "CanKnockback";
     @Unique private static final String MAX_KNOCKBACK_TIMER = "KnockbackInterval";
@@ -61,27 +61,27 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
     @Unique private int maxBoostTimer = 200;
     @Unique private double boostRadius = 0f;
 
-    @Inject(method="readData", at=@At("TAIL"))
-    private void readExtendedNbt (World world, BlockPos pos, ReadView view, CallbackInfo ci) {
-        this.canKnockback = view.getBoolean(CAN_KNOCKBACK, false);
-        this.maxKnockbackTimer = view.getInt(MAX_KNOCKBACK_TIMER, 200);
-        this.knockbackStrength = view.getDouble(KNOCKBACK_STRENGTH, 0.2);
-        this.knockbackRadius = view.getDouble(KNOCKBACK_RADIUS, 4);
-        this.canHeal = view.getBoolean(CAN_HEAL, false);
-        this.maxHealTimer = view.getInt(MAX_HEAL_TIMER, 200);
-        this.healAmount = view.getFloat(HEAL_AMOUNT, 0f);
-        this.healRadius = view.getDouble(HEAL_RADIUS, 0);
-        this.canBoost = view.getBoolean(CAN_BOOST, false);
-        this.maxBoostTimer = view.getInt(MAX_BOOST_TIMER, 200);
-        this.boostRadius = view.getDouble(BOOST_RADIUS, 0);
+    @Inject(method="load", at=@At("TAIL"))
+    private void readExtendedNbt (Level world, BlockPos pos, ValueInput view, CallbackInfo ci) {
+        this.canKnockback = view.getBooleanOr(CAN_KNOCKBACK, false);
+        this.maxKnockbackTimer = view.getIntOr(MAX_KNOCKBACK_TIMER, 200);
+        this.knockbackStrength = view.getDoubleOr(KNOCKBACK_STRENGTH, 0.2);
+        this.knockbackRadius = view.getDoubleOr(KNOCKBACK_RADIUS, 4);
+        this.canHeal = view.getBooleanOr(CAN_HEAL, false);
+        this.maxHealTimer = view.getIntOr(MAX_HEAL_TIMER, 200);
+        this.healAmount = view.getFloatOr(HEAL_AMOUNT, 0f);
+        this.healRadius = view.getDoubleOr(HEAL_RADIUS, 0);
+        this.canBoost = view.getBooleanOr(CAN_BOOST, false);
+        this.maxBoostTimer = view.getIntOr(MAX_BOOST_TIMER, 200);
+        this.boostRadius = view.getDoubleOr(BOOST_RADIUS, 0);
 
         this.knockbackTimer = Math.min(this.knockbackTimer, this.maxKnockbackTimer);
         this.healTimer = Math.min(this.healTimer, this.maxHealTimer);
         this.boostTimer = Math.min(this.boostTimer, this.maxBoostTimer);
     }
 
-    @Inject(method="writeData", at=@At("TAIL"))
-    private void writeExtendedNbt (WriteView view, CallbackInfo ci) {
+    @Inject(method="save", at=@At("TAIL"))
+    private void writeExtendedNbt (ValueOutput view, CallbackInfo ci) {
         view.putBoolean(CAN_KNOCKBACK, this.canKnockback);
         view.putInt(MAX_KNOCKBACK_TIMER, this.maxKnockbackTimer);
         view.putDouble(KNOCKBACK_STRENGTH, this.knockbackStrength);
@@ -99,31 +99,31 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
 
     @Inject(method="serverTick", at=@At(
         value="INVOKE",
-        target="Lnet/minecraft/block/spawner/MobSpawnerLogic;isPlayerInRange(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z",
+        target="Lnet/minecraft/world/level/BaseSpawner;isNearPlayer(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z",
         shift=At.Shift.AFTER)
     )
-    private void performActions (ServerWorld world, BlockPos pos, CallbackInfo ci) {
-        Vec3d centrePos = pos.toCenterPos();
+    private void performActions (ServerLevel world, BlockPos pos, CallbackInfo ci) {
+        Vec3 centrePos = pos.getCenter();
 
         if (this.canKnockback) {
             --this.knockbackTimer;
 
             if (this.knockbackTimer == this.maxKnockbackTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.knockbackTimer, ColorHelper.toRgbVector(0xE2E2E2)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.sendParticles(new AOEChargingParticleEffect(this.knockbackTimer, ARGB.vector3fFromRGB24(0xE2E2E2)), centrePos.x(), pos.getY() + 0.025, centrePos.z(), 1, 0, 0, 0, 0);
             }
             else if (this.knockbackTimer <= 0) {
                 this.knockbackTimer = this.maxKnockbackTimer;
-                world.spawnParticles(ParticleTypes.GUST_EMITTER_SMALL, centrePos.getX(), centrePos.getY(), centrePos.getZ(), 1, 0, 0, 0, 0);
-                List<ServerPlayerEntity> players = world.getPlayers(player -> player.getEntityPos().isWithinRangeOf(centrePos, this.knockbackRadius, this.knockbackRadius) && !player.isCreative() && !player.isSpectator());
-                for (ServerPlayerEntity player : players) {
-                    double strength = this.knockbackStrength * (1 - player.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE));
+                world.sendParticles(ParticleTypes.GUST_EMITTER_SMALL, centrePos.x(), centrePos.y(), centrePos.z(), 1, 0, 0, 0, 0);
+                List<ServerPlayer> players = world.getPlayers(player -> player.position().closerThan(centrePos, this.knockbackRadius, this.knockbackRadius) && !player.isCreative() && !player.isSpectator());
+                for (ServerPlayer player : players) {
+                    double strength = this.knockbackStrength * (1 - player.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
                     if (strength > 0) {
-                        Vec3d velocity = new Vec3d(player.getX() - centrePos.getX(), player.getY() >= pos.getY() ? 0.5 : -0.5, player.getZ() - centrePos.getZ()).normalize().multiply(strength);
-                        player.addVelocity(velocity);
-                        player.velocityDirty = true;
+                        Vec3 velocity = new Vec3(player.getX() - centrePos.x(), player.getY() >= pos.getY() ? 0.5 : -0.5, player.getZ() - centrePos.z()).normalize().scale(strength);
+                        player.push(velocity);
+                        player.needsSync = true;
                     }
                 }
-                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundSource.BLOCKS, 1, 1);
             }
         }
 
@@ -131,17 +131,17 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
             --this.healTimer;
 
             if (this.healTimer == this.maxHealTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.healTimer, ColorHelper.toRgbVector(0x47BC78)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.sendParticles(new AOEChargingParticleEffect(this.healTimer, ARGB.vector3fFromRGB24(0x47BC78)), centrePos.x(), pos.getY() + 0.025, centrePos.z(), 1, 0, 0, 0, 0);
             }
             else if (this.healTimer <= 0) {
                 this.healTimer = this.maxHealTimer;
-                world.spawnParticles(CSParticleTypes.HEAL, centrePos.getX(), centrePos.getY() + 0.5, centrePos.getZ(), 1, 0, 0, 0, 0);
-                List<HostileEntity> mobs = world.getEntitiesByClass(HostileEntity.class, Box.of(centrePos, this.healRadius, 3, this.healRadius), mob -> true);
-                for (HostileEntity hostile : mobs) {
+                world.sendParticles(CSParticleTypes.HEAL, centrePos.x(), centrePos.y() + 0.5, centrePos.z(), 1, 0, 0, 0, 0);
+                List<Monster> mobs = world.getEntitiesOfClass(Monster.class, AABB.ofSize(centrePos, this.healRadius, 3, this.healRadius), mob -> true);
+                for (Monster hostile : mobs) {
                     hostile.heal(this.healAmount);
-                    world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
+                    world.sendParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
                 }
-                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_HEAL, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_HEAL, SoundSource.BLOCKS, 1, 1);
             }
         }
 
@@ -149,17 +149,17 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
             --this.boostTimer;
 
             if (this.boostTimer == this.maxBoostTimer / 2) {
-                world.spawnParticles(new AOEChargingParticleEffect(this.boostTimer, ColorHelper.toRgbVector(0xFF8459)), centrePos.getX(), pos.getY() + 0.025, centrePos.getZ(), 1, 0, 0, 0, 0);
+                world.sendParticles(new AOEChargingParticleEffect(this.boostTimer, ARGB.vector3fFromRGB24(0xFF8459)), centrePos.x(), pos.getY() + 0.025, centrePos.z(), 1, 0, 0, 0, 0);
             }
             else if (this.boostTimer <= 0) {
                 this.boostTimer = this.maxBoostTimer;
-                world.spawnParticles(CSParticleTypes.BOOST, centrePos.getX(), centrePos.getY() + 0.5, centrePos.getZ(), 1, 0, 0, 0, 0);
-                List<HostileEntity> mobs = world.getEntitiesByClass(HostileEntity.class, Box.of(centrePos, this.boostRadius, 3, this.boostRadius), mob -> true);
-                for (HostileEntity hostile : mobs) {
-                    hostile.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 30, 1));
-                    world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
+                world.sendParticles(CSParticleTypes.BOOST, centrePos.x(), centrePos.y() + 0.5, centrePos.z(), 1, 0, 0, 0, 0);
+                List<Monster> mobs = world.getEntitiesOfClass(Monster.class, AABB.ofSize(centrePos, this.boostRadius, 3, this.boostRadius), mob -> true);
+                for (Monster hostile : mobs) {
+                    hostile.addEffect(new MobEffectInstance(MobEffects.SPEED, 30, 1));
+                    world.sendParticles(ParticleTypes.HAPPY_VILLAGER, hostile.getX(), hostile.getEyeY(), hostile.getZ(), 8, 0.35, 0.35, 0.35, 0);
                 }
-                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_BOOST, SoundCategory.BLOCKS, 1, 1);
+                world.playSound(null, pos, CSSoundEvents.BLOCK_SPAWNER_BOOST, SoundSource.BLOCKS, 1, 1);
             }
         }
     }

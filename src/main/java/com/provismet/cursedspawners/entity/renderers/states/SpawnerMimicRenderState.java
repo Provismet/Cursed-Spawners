@@ -1,8 +1,8 @@
 package com.provismet.cursedspawners.entity.renderers.states;
 
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.entity.AnimationState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.world.entity.AnimationState;
 
 public class SpawnerMimicRenderState extends LivingEntityRenderState {
     public final AnimationState idleState = new AnimationState();

@@ -11,7 +11,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class CursedSpawnersMain implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("Cursed Spawners");
 
 	public static Identifier identifier (String path) {
-		return Identifier.of(MODID, path);
+		return Identifier.fromNamespaceAndPath(MODID, path);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class CursedSpawnersMain implements ModInitializer {
 		PayloadTypeRegistry.playS2C().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register((networkHandler, packetSender, server) -> {
-			packetSender.sendPacket(new GameRulePayloadS2C(server.getOverworld().getGameRules().getValue(CSGamerules.BREAK_SPEED).floatValue()));
+			packetSender.sendPacket(new GameRulePayloadS2C(server.overworld().getGameRules().get(CSGamerules.BREAK_SPEED).floatValue()));
 		});
 	}
 }

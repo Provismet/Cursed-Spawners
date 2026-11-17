@@ -1,21 +1,20 @@
 package com.provismet.cursedspawners.utility;
 
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.SilverfishEntity;
-import net.minecraft.entity.mob.VexEntity;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class SpawnerBreakEffects {
     public static final String NORMAL_BREAK = "normal";
@@ -27,30 +26,30 @@ public abstract class SpawnerBreakEffects {
 
     static {
         EFFECTS.put(SUMMON_VEX, (spawner, world) -> {
-            Vec3d centrePos = spawner.getPos().toCenterPos();
+            Vec3 centrePos = spawner.getBlockPos().getCenter();
             for (int i = 0; i < 3; ++i) {
-                VexEntity vex = new VexEntity(EntityType.VEX, world);
-                vex.refreshPositionAndAngles(centrePos.getX(), centrePos.getY() + 1, centrePos.getZ(), 0f, 0f);
-                vex.equipStack(EquipmentSlot.MAINHAND, Items.STONE_SWORD.getDefaultStack());
-                world.spawnNewEntityAndPassengers(vex);
+                Vex vex = new Vex(EntityType.VEX, world);
+                vex.snapTo(centrePos.x(), centrePos.y() + 1, centrePos.z(), 0f, 0f);
+                vex.setItemSlot(EquipmentSlot.MAINHAND, Items.STONE_SWORD.getDefaultInstance());
+                world.tryAddFreshEntityWithPassengers(vex);
             }
         });
 
         EFFECTS.put(SUMMON_SILVERFISH, (spawner, world) -> {
-            Vec3d centrePos = spawner.getPos().toCenterPos();
+            Vec3 centrePos = spawner.getBlockPos().getCenter();
             for (int i = 0; i < 5; ++i) {
-                SilverfishEntity silverfish = new SilverfishEntity(EntityType.SILVERFISH, world);
-                silverfish.refreshPositionAndAngles(centrePos.getX(), centrePos.getY() + 1, centrePos.getZ(), 0f, 0f);
-                world.spawnNewEntityAndPassengers(silverfish);
+                Silverfish silverfish = new Silverfish(EntityType.SILVERFISH, world);
+                silverfish.snapTo(centrePos.x(), centrePos.y() + 1, centrePos.z(), 0f, 0f);
+                world.tryAddFreshEntityWithPassengers(silverfish);
             }
         });
 
         EFFECTS.put(CURSE, (spawner, world) -> {
-            Vec3d centrePos = spawner.getPos().toCenterPos();
-            List<ServerPlayerEntity> playersInRange = world.getPlayers(player -> player.getEntityPos().isWithinRangeOf(centrePos, 8, 8) && !player.isCreative() && !player.isSpectator());
-            for (ServerPlayerEntity player : playersInRange) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60));
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 60, 2));
+            Vec3 centrePos = spawner.getBlockPos().getCenter();
+            List<ServerPlayer> playersInRange = world.getPlayers(player -> player.position().closerThan(centrePos, 8, 8) && !player.isCreative() && !player.isSpectator());
+            for (ServerPlayer player : playersInRange) {
+                player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60));
+                player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 2));
             }
         });
     }
@@ -59,13 +58,13 @@ public abstract class SpawnerBreakEffects {
         return EFFECTS.getOrDefault(key, (spawner, world) -> {});
     }
 
-    public static String getRandomEffectKey (Random random) {
+    public static String getRandomEffectKey (RandomSource random) {
         List<String> keys = EFFECTS.keySet().stream().toList();
         return keys.get(random.nextInt(keys.size()));
     }
 
     @FunctionalInterface
     public interface SpawnerConsumer {
-        void accept (MobSpawnerBlockEntity spawner, ServerWorld world);
+        void accept (SpawnerBlockEntity spawner, ServerLevel world);
     }
 }

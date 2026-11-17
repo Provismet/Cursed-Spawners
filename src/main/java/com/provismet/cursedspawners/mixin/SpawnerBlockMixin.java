@@ -5,84 +5,84 @@ import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
 import com.provismet.cursedspawners.utility.CSGamerules;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.SpawnerBlock;
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.SpawnerBlock;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.phys.AABB;
 
 @Mixin(SpawnerBlock.class)
-public abstract class SpawnerBlockMixin extends BlockWithEntity {
-    protected SpawnerBlockMixin (Settings settings) {
+public abstract class SpawnerBlockMixin extends BaseEntityBlock {
+    protected SpawnerBlockMixin (Properties settings) {
         super(settings);
     }
 
     @Override
-    public BlockState onBreak (World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        state = super.onBreak(world, pos, state, player);
-        if (player.isCreative() || !(world instanceof ServerWorld serverWorld)) return state;
+    public BlockState playerWillDestroy (Level world, BlockPos pos, BlockState state, Player player) {
+        state = super.playerWillDestroy(world, pos, state, player);
+        if (player.isCreative() || !(world instanceof ServerLevel serverWorld)) return state;
 
-        double worldMimicChance = serverWorld.getGameRules().getValue(CSGamerules.MIMIC_CHANCE);
-        if (worldMimicChance >= 0 && world.getBlockEntity(pos) instanceof MobSpawnerBlockEntity blockEntity) {
+        double worldMimicChance = serverWorld.getGameRules().get(CSGamerules.MIMIC_CHANCE);
+        if (worldMimicChance >= 0 && world.getBlockEntity(pos) instanceof SpawnerBlockEntity blockEntity) {
             double blockMimicChance;
             if (((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$useWorldMimicChance()) blockMimicChance = worldMimicChance;
             else blockMimicChance = ((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$getMimicChance();
 
             if (world.getRandom().nextDouble() <= blockMimicChance) {
-                NbtCompound nbt = blockEntity.createNbtWithIdentifyingData(world.getRegistryManager()).copy();
+                CompoundTag nbt = blockEntity.saveWithFullMetadata(world.registryAccess()).copy();
                 SpawnerMimicEntity mimic = new SpawnerMimicEntity(world);
-                UUID uuid = mimic.getUuid();
+                UUID uuid = mimic.getUUID();
 
                 if (nbt.getShort("MinSpawnDelay").isPresent()) nbt.putShort("MinSpawnDelay", (short)(nbt.getShort("MinSpawnDelay").get() / 1.5));
                 if (nbt.getShort("MaxSpawnDelay").isPresent()) nbt.putShort("MaxSpawnDelay", (short)(nbt.getShort("MaxSpawnDelay").get() / 1.5));
                 if (nbt.contains("Delay")) nbt.putShort("Delay", (short)20);
 
-                try (ErrorReporter.Logging logging = new ErrorReporter.Logging(this::toString, CursedSpawnersMain.LOGGER)) {
-                    ReadView view = NbtReadView.create(logging, serverWorld.getRegistryManager(), nbt);
-                    mimic.readData(view);
-                    mimic.setUuid(uuid);
-                    mimic.refreshPositionAndAngles(pos, 0, 0);
-                    mimic.setAttacker(player);
-                    world.spawnEntity(mimic);
+                try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(this::toString, CursedSpawnersMain.LOGGER)) {
+                    ValueInput view = TagValueInput.create(logging, serverWorld.registryAccess(), nbt);
+                    mimic.load(view);
+                    mimic.setUUID(uuid);
+                    mimic.snapTo(pos, 0, 0);
+                    mimic.setLastHurtByMob(player);
+                    world.addFreshEntity(mimic);
                 }
             }
             else {
-                ItemScatterer.onStateReplaced(state, world, pos);
+                Containers.updateNeighboursAfterDestroy(state, world, pos);
             }
         }
         return state;
     }
 
     @Override
-    protected float calcBlockBreakingDelta (BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
-        float scale = super.calcBlockBreakingDelta(state, player, world, pos);
+    protected float getDestroyProgress (BlockState state, Player player, BlockGetter world, BlockPos pos) {
+        float scale = super.getDestroyProgress(state, player, world, pos);
 
-        if (player.getEntityWorld().isClient()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
-        else if (player.getEntityWorld() instanceof ServerWorld serverWorld) scale *= serverWorld.getGameRules().getValue(CSGamerules.BREAK_SPEED).floatValue();
+        if (player.level().isClientSide()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
+        else if (player.level() instanceof ServerLevel serverWorld) scale *= serverWorld.getGameRules().get(CSGamerules.BREAK_SPEED).floatValue();
 
         return scale;
     }
 
-    @Inject(method="onStacksDropped", at=@At("HEAD"), cancellable=true)
-    private void preventExp (BlockState state, ServerWorld world, BlockPos pos, ItemStack tool, boolean dropExperience, CallbackInfo info) {
-        if (!world.getEntitiesByClass(SpawnerMimicEntity.class, Box.of(pos.toCenterPos(), 0.1, 0.1, 0.1), entity -> true).isEmpty())
+    @Inject(method="spawnAfterBreak", at=@At("HEAD"), cancellable=true)
+    private void preventExp (BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience, CallbackInfo info) {
+        if (!world.getEntitiesOfClass(SpawnerMimicEntity.class, AABB.ofSize(pos.getCenter(), 0.1, 0.1, 0.1), entity -> true).isEmpty())
             info.cancel();
     }
 }

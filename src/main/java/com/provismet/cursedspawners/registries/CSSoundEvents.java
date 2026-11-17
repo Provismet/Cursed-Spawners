@@ -1,10 +1,10 @@
 package com.provismet.cursedspawners.registries;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public abstract class CSSoundEvents {
     public static final SoundEvent ENTITY_MIMIC_AMBIENT = register("entity.mimic.ambient");
@@ -19,12 +19,12 @@ public abstract class CSSoundEvents {
 
     private static SoundEvent register (String name) {
         Identifier id = CursedSpawnersMain.identifier(name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 
     private static SoundEvent register (String name, float distance) {
         Identifier id = CursedSpawnersMain.identifier(name);
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id, distance));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createFixedRangeEvent(id, distance));
     }
 
     public static void init () {}
