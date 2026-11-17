@@ -177,7 +177,7 @@ public abstract class MobSpawnerBlockEntityMixin extends BlockEntity implements 
         }
 
         String nextAction = this.reforgeActions.removeFirst();
-        Vec3 centrePos = this.getBlockPos().getCenter();
+        Vec3 centrePos = Vec3.atCenterOf(this.getBlockPos());
         serverWorld.sendParticles(ParticleTypes.POOF, centrePos.x(), centrePos.y(), centrePos.z(), 20, 0.5, 0.5, 0.5, 0);
         SpawnerBreakEffects.getEffect(nextAction).accept((SpawnerBlockEntity)(Object)this, serverWorld);
         return false;

@@ -3,7 +3,7 @@ package com.provismet.datagen.cursedspawners;
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSSoundEvents;
 import com.provismet.lilylib.datagen.provider.LilySoundProvider;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SoundGenerator extends LilySoundProvider {
-    protected SoundGenerator (FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    protected SoundGenerator (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(output, registryLookup);
     }
 

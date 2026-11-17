@@ -103,7 +103,7 @@ public abstract class MobSpawnerLogicMixin implements IMixinMobSpawnerLogic {
         shift=At.Shift.AFTER)
     )
     private void performActions (ServerLevel world, BlockPos pos, CallbackInfo ci) {
-        Vec3 centrePos = pos.getCenter();
+        Vec3 centrePos = Vec3.atCenterOf(pos);
 
         if (this.canKnockback) {
             --this.knockbackTimer;

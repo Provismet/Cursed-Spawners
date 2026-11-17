@@ -8,30 +8,28 @@ import com.provismet.cursedspawners.entity.models.SpawnerMimicModel;
 import com.provismet.cursedspawners.entity.renderers.states.SpawnerMimicRenderState;
 import com.provismet.cursedspawners.registries.client.CSModelLayers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class SpawnerMimicEntityRenderer extends MobRenderer<SpawnerMimicEntity, SpawnerMimicRenderState, SpawnerMimicModel> {
     private static final Identifier TEXTURE = CursedSpawnersMain.identifier("textures/entity/spawner_mimic.png");
 
-    private final EntityRenderDispatcher dispatcher;
-
     public SpawnerMimicEntityRenderer (EntityRendererProvider.Context context) {
         super(context, new SpawnerMimicModel(context.bakeLayer(CSModelLayers.SPAWNER_MIMIC)), 0.6f);
-        this.entityRenderDispatcher = context.getEntityRenderDispatcher();
     }
 
     @Override
+    @NotNull
     public SpawnerMimicRenderState createRenderState () {
         return new SpawnerMimicRenderState();
     }
 
     @Override
-    public void updateRenderState (SpawnerMimicEntity mimic, SpawnerMimicRenderState state, float tickDelta) {
+    public void extractRenderState (SpawnerMimicEntity mimic, SpawnerMimicRenderState state, float tickDelta) {
         super.extractRenderState(mimic, state, tickDelta);
         state.attackState.copyFrom(mimic.attackState);
         state.idleState.copyFrom(mimic.idleState);
@@ -42,7 +40,7 @@ public class SpawnerMimicEntityRenderer extends MobRenderer<SpawnerMimicEntity, 
     }
 
     @Override
-    public void render (SpawnerMimicRenderState state, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
+    public void submit (SpawnerMimicRenderState state, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
         super.submit(state, matrixStack, orderedRenderCommandQueue, cameraRenderState);
 
         if (state.renderedEntityState != null) { // Yoinked from MobSpawnerBlockEntityRenderer
@@ -65,7 +63,8 @@ public class SpawnerMimicEntityRenderer extends MobRenderer<SpawnerMimicEntity, 
     }
 
     @Override
-    public Identifier getTexture (SpawnerMimicRenderState entity) {
+    @NotNull
+    public Identifier getTextureLocation (SpawnerMimicRenderState entity) {
         return TEXTURE;
     }
 }

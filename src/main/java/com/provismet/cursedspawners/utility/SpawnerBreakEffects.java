@@ -1,8 +1,5 @@
 package com.provismet.cursedspawners.utility;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -16,6 +13,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public abstract class SpawnerBreakEffects {
     public static final String NORMAL_BREAK = "normal";
     public static final String SUMMON_VEX = "vex";
@@ -26,7 +27,7 @@ public abstract class SpawnerBreakEffects {
 
     static {
         EFFECTS.put(SUMMON_VEX, (spawner, world) -> {
-            Vec3 centrePos = spawner.getBlockPos().getCenter();
+            Vec3 centrePos = Vec3.atCenterOf(spawner.getBlockPos());
             for (int i = 0; i < 3; ++i) {
                 Vex vex = new Vex(EntityType.VEX, world);
                 vex.snapTo(centrePos.x(), centrePos.y() + 1, centrePos.z(), 0f, 0f);
@@ -36,7 +37,7 @@ public abstract class SpawnerBreakEffects {
         });
 
         EFFECTS.put(SUMMON_SILVERFISH, (spawner, world) -> {
-            Vec3 centrePos = spawner.getBlockPos().getCenter();
+            Vec3 centrePos = Vec3.atCenterOf(spawner.getBlockPos());
             for (int i = 0; i < 5; ++i) {
                 Silverfish silverfish = new Silverfish(EntityType.SILVERFISH, world);
                 silverfish.snapTo(centrePos.x(), centrePos.y() + 1, centrePos.z(), 0f, 0f);
@@ -45,7 +46,7 @@ public abstract class SpawnerBreakEffects {
         });
 
         EFFECTS.put(CURSE, (spawner, world) -> {
-            Vec3 centrePos = spawner.getBlockPos().getCenter();
+            Vec3 centrePos = Vec3.atCenterOf(spawner.getBlockPos());
             List<ServerPlayer> playersInRange = world.getPlayers(player -> player.position().closerThan(centrePos, 8, 8) && !player.isCreative() && !player.isSpectator());
             for (ServerPlayer player : playersInRange) {
                 player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60));

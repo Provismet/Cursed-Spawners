@@ -54,6 +54,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -233,16 +234,19 @@ public class SpawnerMimicEntity extends Monster {
     }
 
     @Override
+    @NotNull
     protected SoundEvent getAmbientSound () {
         return CSSoundEvents.ENTITY_MIMIC_AMBIENT;
     }
 
     @Override
+    @NotNull
     protected SoundEvent getDeathSound () {
         return CSSoundEvents.ENTITY_MIMIC_DEATH;
     }
 
     @Override
+    @NotNull
     protected SoundEvent getHurtSound (DamageSource source) {
         return CSSoundEvents.ENTITY_MIMIC_HURT;
     }
@@ -253,6 +257,7 @@ public class SpawnerMimicEntity extends Monster {
     }
 
     @Override
+    @NotNull
     protected InteractionResult mobInteract (Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         if (held.getItem() instanceof SpawnEggItem spawnEgg) {
@@ -269,6 +274,7 @@ public class SpawnerMimicEntity extends Monster {
     }
 
     @Override
+    @NotNull
     protected InteractionResult checkAndHandleImportantInteractions (Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         if (held.getItem() instanceof SpawnEggItem) return InteractionResult.PASS;

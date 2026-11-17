@@ -56,7 +56,7 @@ public class SpawnerMimicModel extends EntityModel<SpawnerMimicRenderState> {
 	}
 
 	@Override
-	public void setAngles (SpawnerMimicRenderState state) {
+	public void setupAnim (SpawnerMimicRenderState state) {
 		super.setupAnim(state);
 
 		this.walkAnimation.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 3f, 50f);

@@ -5,6 +5,7 @@ import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
 import com.provismet.cursedspawners.utility.CSGamerules;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -82,7 +83,7 @@ public abstract class SpawnerBlockMixin extends BaseEntityBlock {
 
     @Inject(method="spawnAfterBreak", at=@At("HEAD"), cancellable=true)
     private void preventExp (BlockState state, ServerLevel world, BlockPos pos, ItemStack tool, boolean dropExperience, CallbackInfo info) {
-        if (!world.getEntitiesOfClass(SpawnerMimicEntity.class, AABB.ofSize(pos.getCenter(), 0.1, 0.1, 0.1), entity -> true).isEmpty())
+        if (!world.getEntitiesOfClass(SpawnerMimicEntity.class, AABB.ofSize(Vec3.atCenterOf(pos), 0.1, 0.1, 0.1),entity -> true).isEmpty())
             info.cancel();
     }
 }

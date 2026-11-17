@@ -6,14 +6,14 @@ import com.provismet.cursedspawners.particle.type.HealParticle;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 
 @Environment(EnvType.CLIENT)
 public abstract class CSParticleFactories {
-    private static <T extends ParticleOptions> void register (ParticleType<T> particle, ParticleFactoryRegistry.PendingParticleFactory<T> constructor) {
-        ParticleFactoryRegistry.getInstance().register(particle, constructor);
+    private static <T extends ParticleOptions> void register (ParticleType<T> particle, ParticleProviderRegistry.PendingParticleProvider<T> constructor) {
+        ParticleProviderRegistry.getInstance().register(particle, constructor);
     }
 
     public static void register () {
