@@ -23,6 +23,9 @@ public abstract class SpawnerPassiveEffects {
         register("speed_boost", SpeedBoostEffect.CODEC, SpeedBoostEffect::fromRandom);
     }
 
+    /**
+     * Addons should use this method to register passive actions. The factory functions get stored to be randomly selected later.
+     */
     public static void register (String name, MapCodec<? extends SpawnerPassiveEffect> codec, Function<RandomSource,SpawnerPassiveEffect> factory) {
         Registry.register(CursedSpawnersRegistries.SPAWNER_PASSIVE_EFFECT, CursedSpawnersMain.identifier(name), codec);
         RANDOM_FACTORIES.add(factory);
