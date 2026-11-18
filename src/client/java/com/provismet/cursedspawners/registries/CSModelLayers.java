@@ -1,7 +1,7 @@
-package com.provismet.cursedspawners.registries.client;
+package com.provismet.cursedspawners.registries;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
-import com.provismet.cursedspawners.entity.models.SpawnerMimicModel;
+import com.provismet.cursedspawners.entity.renderer.models.SpawnerMimicModel;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 

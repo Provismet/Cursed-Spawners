@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.entity.renderers.states;
+package com.provismet.cursedspawners.entity.renderer.state;
 
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;

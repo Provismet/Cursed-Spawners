@@ -1,9 +1,8 @@
-package com.provismet.cursedspawners.registries.client;
+package com.provismet.cursedspawners.registries;
 
-import com.provismet.cursedspawners.particle.type.AOEChargingParticle;
-import com.provismet.cursedspawners.particle.type.BoostParticle;
-import com.provismet.cursedspawners.particle.type.HealParticle;
-import com.provismet.cursedspawners.registries.CSParticleTypes;
+import com.provismet.cursedspawners.particle.AOEChargingParticle;
+import com.provismet.cursedspawners.particle.BoostParticle;
+import com.provismet.cursedspawners.particle.HealParticle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;

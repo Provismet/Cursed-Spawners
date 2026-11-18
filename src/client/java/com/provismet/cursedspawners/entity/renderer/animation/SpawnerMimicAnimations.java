@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.entity.animation;
+package com.provismet.cursedspawners.entity.renderer.animation;
 
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;

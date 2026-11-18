@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.particle.type;
+package com.provismet.cursedspawners.particle;
 
 import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
 import com.provismet.lilylib.particle.FlatParticle;

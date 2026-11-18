@@ -1,12 +1,12 @@
-package com.provismet.cursedspawners.entity.renderers;
+package com.provismet.cursedspawners.entity.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
-import com.provismet.cursedspawners.entity.models.SpawnerMimicModel;
-import com.provismet.cursedspawners.entity.renderers.states.SpawnerMimicRenderState;
-import com.provismet.cursedspawners.registries.client.CSModelLayers;
+import com.provismet.cursedspawners.entity.renderer.models.SpawnerMimicModel;
+import com.provismet.cursedspawners.entity.renderer.state.SpawnerMimicRenderState;
+import com.provismet.cursedspawners.registries.CSModelLayers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

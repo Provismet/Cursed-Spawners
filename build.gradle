@@ -24,6 +24,13 @@ fabricApi {
 
 loom {
 	accessWidenerPath = file("src/main/resources/cursed-spawners.accesswidener")
+	splitEnvironmentSourceSets()
+	mods {
+		"cursed-spawners" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 }
 
 dependencies {

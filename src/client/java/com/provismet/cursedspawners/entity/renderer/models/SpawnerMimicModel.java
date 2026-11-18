@@ -1,7 +1,7 @@
-package com.provismet.cursedspawners.entity.models;
+package com.provismet.cursedspawners.entity.renderer.models;
 
-import com.provismet.cursedspawners.entity.animation.SpawnerMimicAnimations;
-import com.provismet.cursedspawners.entity.renderers.states.SpawnerMimicRenderState;
+import com.provismet.cursedspawners.entity.renderer.animation.SpawnerMimicAnimations;
+import com.provismet.cursedspawners.entity.renderer.state.SpawnerMimicRenderState;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;

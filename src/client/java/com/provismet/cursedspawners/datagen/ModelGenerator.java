@@ -1,4 +1,4 @@
-package com.provismet.datagen.cursedspawners;
+package com.provismet.cursedspawners.datagen;
 
 import com.provismet.cursedspawners.registries.CSItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;

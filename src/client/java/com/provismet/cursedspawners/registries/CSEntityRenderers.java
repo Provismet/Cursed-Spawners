@@ -1,7 +1,6 @@
-package com.provismet.cursedspawners.registries.client;
+package com.provismet.cursedspawners.registries;
 
-import com.provismet.cursedspawners.entity.renderers.SpawnerMimicEntityRenderer;
-import com.provismet.cursedspawners.registries.CSEntityTypes;
+import com.provismet.cursedspawners.entity.renderer.SpawnerMimicEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
 public abstract class CSEntityRenderers {

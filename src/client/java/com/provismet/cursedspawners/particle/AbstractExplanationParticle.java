@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.particle.type;
+package com.provismet.cursedspawners.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.SimpleAnimatedParticle;

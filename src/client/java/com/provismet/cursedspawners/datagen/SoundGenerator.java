@@ -1,4 +1,4 @@
-package com.provismet.datagen.cursedspawners;
+package com.provismet.cursedspawners.datagen;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.registries.CSSoundEvents;
