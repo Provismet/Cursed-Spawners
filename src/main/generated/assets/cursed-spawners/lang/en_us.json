@@ -1,6 +1,6 @@
 {
   "entity.cursed-spawners.spawner_mimic": "Spawner Mimic",
-  "gamerule.category.cursed-spawners": "Cursed Spawners",
+  "gamerule.category.cursed-spawners.gamerule_category": "Cursed Spawners",
   "gamerule.cursed-spawners.spawner_action_chance": "Bonus Action Chance",
   "gamerule.cursed-spawners.spawner_action_chance.description": "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.",
   "gamerule.cursed-spawners.spawner_max_actions": "Maximum Actions",

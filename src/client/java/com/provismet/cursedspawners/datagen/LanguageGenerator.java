@@ -17,7 +17,7 @@ public class LanguageGenerator extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations (HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
-        translationBuilder.add("gamerule.category.cursed-spawners", "Cursed Spawners");
+        translationBuilder.add("gamerule.category.cursed-spawners.gamerule_category", "Cursed Spawners");
         this.gamerule(translationBuilder, CursedSpawnersGamerules.MIMIC_CHANCE, "Mimic Chance", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
         this.gamerule(translationBuilder, CursedSpawnersGamerules.SPAWNER_ACTION_CHANCE, "Bonus Action Chance", "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.");
         this.gamerule(translationBuilder, CursedSpawnersGamerules.MAX_SPAWNER_ACTIONS, "Maximum Actions", "Spawners can have up to this many bonus actions.");
