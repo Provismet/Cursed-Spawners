@@ -53,9 +53,9 @@ public class SpawnerMimicEntityRenderer extends MobRenderer<SpawnerMimicEntity, 
             }
 
             matrixStack.translate(0f, 0.4f, 0f);
-            matrixStack.mulPose(Axis.YP.rotationDegrees((float)state.mobRotation * 10f));
+            matrixStack.rotate(Axis.YP.rotationDegrees((float)state.mobRotation * 10f));
             matrixStack.translate(0f, -0.2f, 0f);
-            matrixStack.mulPose(Axis.XP.rotationDegrees(-30f));
+            matrixStack.rotate(Axis.XP.rotationDegrees(-30f));
             matrixStack.scale(f, f, f);
             this.entityRenderDispatcher.submit(state.renderedEntityState, cameraRenderState, 0, 0, 0, matrixStack, orderedRenderCommandQueue);
             matrixStack.popPose();

@@ -45,7 +45,7 @@ public record KnockbackPassiveEffect (int interval, double radius, double streng
                 if (strength > 0) {
                     Vec3 velocity = new Vec3(player.getX() - centrePos.x(), player.getY() >= spawnerPos.getY() ? 0.5 : -0.5, player.getZ() - centrePos.z()).normalize().scale(strength);
                     player.push(velocity);
-                    player.hurtMarked = true;
+                    player.syncVelocity = true;
                 }
             }
             level.playSound(null, spawnerPos, CursedSpawnersSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundSource.BLOCKS, 1, 1);
