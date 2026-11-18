@@ -10,8 +10,9 @@ public class CursedSpawnersDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(LanguageGenerator::new);
 		pack.addProvider(ModelGenerator::new);
 		pack.addProvider(ParticleGenerator::new);
-		pack.addProvider(LootTableGenerator::new);
+		pack.addProvider(EntityLootTableGenerator::new);
 		pack.addProvider(SoundGenerator::new);
 		pack.addProvider(EntityTypeTagGenerator::new);
+		pack.addProvider(ChestLootTableGenerator::new);
 	}
 }

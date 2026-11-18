@@ -3,6 +3,8 @@
   "gamerule.category.cursed-spawners": "Cursed Spawners",
   "gamerule.cursed-spawners.spawner_action_chance": "Bonus Action Chance",
   "gamerule.cursed-spawners.spawner_action_chance.description": "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.",
+  "gamerule.cursed-spawners.spawner_max_actions": "Maximum Actions",
+  "gamerule.cursed-spawners.spawner_max_actions.description": "Spawners can have up to this many bonus actions.",
   "gamerule.cursed-spawners.spawner_mimic_chance": "Mimic Chance",
   "gamerule.cursed-spawners.spawner_mimic_chance.description": "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.",
   "gamerule.cursed-spawners.spawner_mining_speed_modifier": "Mining Speed Modifier",

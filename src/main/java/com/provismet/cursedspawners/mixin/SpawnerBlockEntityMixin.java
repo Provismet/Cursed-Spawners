@@ -6,6 +6,7 @@ import com.provismet.cursedspawners.action.SpawnerData;
 import com.provismet.cursedspawners.action.destroy.SpawnerBreakEffect;
 import com.provismet.cursedspawners.action.passive.SpawnerPassiveEffect;
 import com.provismet.cursedspawners.imixin.IMixinSpawnerBlockEntity;
+import com.provismet.cursedspawners.reference.CursedSpawnersLootTables;
 import com.provismet.cursedspawners.registries.CursedSpawnersRegistries;
 import com.provismet.cursedspawners.registries.SpawnerPassiveEffects;
 import com.provismet.cursedspawners.utility.CSGamerules;
@@ -32,7 +33,6 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -123,11 +123,10 @@ public abstract class SpawnerBlockEntityMixin extends BlockEntity implements IMi
         ActionGroup group = new ActionGroup(passiveEffects, breakEffects);
         this.spawner.cursed_spawners$setActionGroup(group);
 
-        // TODO: These should be custom loot tables.
         if (dangerLevel > 0 && this.lootTable == null) {
-            if (dangerLevel < 3) this.lootTable = BuiltInLootTables.JUNGLE_TEMPLE;
-            else if (dangerLevel < 6) this.lootTable = BuiltInLootTables.SIMPLE_DUNGEON;
-            else this.lootTable = BuiltInLootTables.WOODLAND_MANSION;
+            if (dangerLevel < 3) this.lootTable = CursedSpawnersLootTables.TIER_1;
+            else if (dangerLevel < 6) this.lootTable = CursedSpawnersLootTables.TIER_2;
+            else this.lootTable = CursedSpawnersLootTables.TIER_3;
         }
     }
 

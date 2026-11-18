@@ -16,10 +16,10 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.concurrent.CompletableFuture;
 
-public class LootTableGenerator extends FabricEntityLootSubProvider {
+public class EntityLootTableGenerator extends FabricEntityLootSubProvider {
     CompletableFuture<HolderLookup.Provider> completableLookup;
 
-    public LootTableGenerator (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    public EntityLootTableGenerator (FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(output, registryLookup);
         this.completableLookup = registryLookup;
     }
