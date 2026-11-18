@@ -21,16 +21,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record SpeedBoostEffect (int interval, double radius) implements SpawnerPassiveEffect {
+public record SpeedBoostEffect (int interval, double radius, int duration) implements SpawnerPassiveEffect {
     public static final MapCodec<SpeedBoostEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         Codec.INT.fieldOf("interval").forGetter(SpeedBoostEffect::interval),
-        Codec.DOUBLE.fieldOf("radius").forGetter(SpeedBoostEffect::radius)
+        Codec.DOUBLE.fieldOf("radius").forGetter(SpeedBoostEffect::radius),
+        Codec.INT.fieldOf("duration").forGetter(SpeedBoostEffect::duration)
     ).apply(instance, SpeedBoostEffect::new));
 
     public static SpeedBoostEffect fromRandom (RandomSource random) {
         return new SpeedBoostEffect(
             random.nextIntBetweenInclusive(120, 200),
-            random.triangle(8, 4)
+            random.triangle(8, 4),
+            random.nextIntBetweenInclusive(20, 60)
         );
     }
 
