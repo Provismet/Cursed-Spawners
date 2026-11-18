@@ -2,7 +2,7 @@ package com.provismet.cursedspawners.particle.effect;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.provismet.cursedspawners.registries.CSParticleTypes;
+import com.provismet.cursedspawners.registries.CursedSpawnersParticleTypes;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -31,6 +31,6 @@ public record AOEChargingParticleEffect (int maxAge, Vector3fc colour) implement
     @Override
     @NotNull
     public ParticleType<AOEChargingParticleEffect> getType () {
-        return CSParticleTypes.AOE_CHARGING_INDICATOR;
+        return CursedSpawnersParticleTypes.AOE_CHARGING_INDICATOR;
     }
 }

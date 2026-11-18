@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import java.util.function.Function;
 
-public abstract class CSEntityTypes {
+public abstract class CursedSpawnersEntityTypes {
     public static final EntityType<SpawnerMimicEntity> SPAWNER_MIMIC = register(
         CursedSpawnedEntityTypeIds.SPAWNER_MIMIC,
         key -> EntityType.Builder.<SpawnerMimicEntity>of(SpawnerMimicEntity::new, MobCategory.MONSTER)

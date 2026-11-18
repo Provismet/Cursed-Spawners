@@ -1,7 +1,7 @@
 package com.provismet.cursedspawners.mixin;
 
 import com.provismet.cursedspawners.networking.GameRulePayloadS2C;
-import com.provismet.cursedspawners.utility.CSGamerules;
+import com.provismet.cursedspawners.gamerule.CursedSpawnersGamerules;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.TickTask;
@@ -26,7 +26,7 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
 
     @Inject(method = "onGameRuleChanged", at = @At("TAIL"))
     private <T> void updateGamerulePacket (GameRule<T> gameRule, T value, CallbackInfo info) {
-        if (gameRule == CSGamerules.BREAK_SPEED && value instanceof Double doubleValue) {
+        if (gameRule == CursedSpawnersGamerules.BREAK_SPEED && value instanceof Double doubleValue) {
             for (ServerPlayer player : this.getPlayerList().getPlayers()) {
                 ServerPlayNetworking.send(player, new GameRulePayloadS2C(doubleValue.floatValue()));
             }

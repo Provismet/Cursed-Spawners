@@ -1,14 +1,14 @@
 package com.provismet.cursedspawners;
 
 import com.provismet.cursedspawners.networking.GameRulePayloadS2C;
-import com.provismet.cursedspawners.registries.CSEntityTypes;
-import com.provismet.cursedspawners.registries.CSItemGroups;
-import com.provismet.cursedspawners.registries.CSItems;
-import com.provismet.cursedspawners.registries.CSParticleTypes;
-import com.provismet.cursedspawners.registries.CSSoundEvents;
+import com.provismet.cursedspawners.registries.CursedSpawnersEntityTypes;
+import com.provismet.cursedspawners.registries.CursedSpawnersItemGroups;
+import com.provismet.cursedspawners.registries.CursedSpawnersItems;
+import com.provismet.cursedspawners.registries.CursedSpawnersParticleTypes;
+import com.provismet.cursedspawners.registries.CursedSpawnersSoundEvents;
 import com.provismet.cursedspawners.registries.SpawnerBreakEffects;
 import com.provismet.cursedspawners.registries.SpawnerPassiveEffects;
-import com.provismet.cursedspawners.utility.CSGamerules;
+import com.provismet.cursedspawners.gamerule.CursedSpawnersGamerules;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -27,19 +27,19 @@ public class CursedSpawnersMain implements ModInitializer {
 
 	@Override
 	public void onInitialize () {
-		CSGamerules.init();
-		CSItems.init();
-		CSSoundEvents.init();
+		CursedSpawnersGamerules.init();
+		CursedSpawnersItems.init();
+		CursedSpawnersSoundEvents.init();
 		SpawnerBreakEffects.init();
 		SpawnerPassiveEffects.bootstrap();
-		CSEntityTypes.register();
-		CSParticleTypes.register();
-		CSItemGroups.register();
+		CursedSpawnersEntityTypes.register();
+		CursedSpawnersParticleTypes.register();
+		CursedSpawnersItemGroups.register();
 
 		PayloadTypeRegistry.clientboundPlay().register(GameRulePayloadS2C.ID, GameRulePayloadS2C.CODEC);
 
 		ServerPlayConnectionEvents.JOIN.register((networkHandler, packetSender, server) -> {
-			packetSender.sendPacket(new GameRulePayloadS2C(server.overworld().getGameRules().get(CSGamerules.BREAK_SPEED).floatValue()));
+			packetSender.sendPacket(new GameRulePayloadS2C(server.overworld().getGameRules().get(CursedSpawnersGamerules.BREAK_SPEED).floatValue()));
 		});
 	}
 }

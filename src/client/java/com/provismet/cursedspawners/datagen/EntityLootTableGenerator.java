@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.datagen;
 
-import com.provismet.cursedspawners.registries.CSEntityTypes;
+import com.provismet.cursedspawners.registries.CursedSpawnersEntityTypes;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricEntityLootSubProvider;
 import net.minecraft.core.HolderLookup;
@@ -27,7 +27,7 @@ public class EntityLootTableGenerator extends FabricEntityLootSubProvider {
     @Override
     public void generate () {
         this.add(
-            CSEntityTypes.SPAWNER_MIMIC,
+            CursedSpawnersEntityTypes.SPAWNER_MIMIC,
             LootTable.lootTable()
                 .withPool(
                     LootPool.lootPool()

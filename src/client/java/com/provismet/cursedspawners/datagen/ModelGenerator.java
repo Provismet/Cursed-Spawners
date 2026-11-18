@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.datagen;
 
-import com.provismet.cursedspawners.registries.CSItems;
+import com.provismet.cursedspawners.registries.CursedSpawnersItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -19,6 +19,6 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateItemModels (ItemModelGenerators itemModelGenerator) {
-        itemModelGenerator.generateFlatItem(CSItems.MIMIC_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(CursedSpawnersItems.MIMIC_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
     }
 }

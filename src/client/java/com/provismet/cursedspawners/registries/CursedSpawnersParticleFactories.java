@@ -10,14 +10,14 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 
 @Environment(EnvType.CLIENT)
-public abstract class CSParticleFactories {
+public abstract class CursedSpawnersParticleFactories {
     private static <T extends ParticleOptions> void register (ParticleType<T> particle, ParticleProviderRegistry.PendingParticleProvider<T> constructor) {
         ParticleProviderRegistry.getInstance().register(particle, constructor);
     }
 
     public static void register () {
-        register(CSParticleTypes.AOE_CHARGING_INDICATOR, AOEChargingParticle.Factory::new);
-        register(CSParticleTypes.HEAL, HealParticle.Factory::new);
-        register(CSParticleTypes.BOOST, BoostParticle.Factory::new);
+        register(CursedSpawnersParticleTypes.AOE_CHARGING_INDICATOR, AOEChargingParticle.Factory::new);
+        register(CursedSpawnersParticleTypes.HEAL, HealParticle.Factory::new);
+        register(CursedSpawnersParticleTypes.BOOST, BoostParticle.Factory::new);
     }
 }

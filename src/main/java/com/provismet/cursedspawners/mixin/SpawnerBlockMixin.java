@@ -2,8 +2,8 @@ package com.provismet.cursedspawners.mixin;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
+import com.provismet.cursedspawners.gamerule.CursedSpawnersGamerules;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
-import com.provismet.cursedspawners.utility.CSGamerules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -70,7 +70,7 @@ public abstract class SpawnerBlockMixin extends BaseEntityBlock {
         float scale = super.getDestroyProgress(state, player, world, pos);
 
         if (player.level().isClientSide()) scale *= ClientPacketReceiver.SPAWNER_BREAK_MODIFIER;
-        else if (player.level() instanceof ServerLevel serverWorld) scale *= serverWorld.getGameRules().get(CSGamerules.BREAK_SPEED).floatValue();
+        else if (player.level() instanceof ServerLevel serverWorld) scale *= serverWorld.getGameRules().get(CursedSpawnersGamerules.BREAK_SPEED).floatValue();
 
         return scale;
     }

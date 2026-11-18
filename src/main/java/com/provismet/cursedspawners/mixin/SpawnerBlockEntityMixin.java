@@ -9,7 +9,7 @@ import com.provismet.cursedspawners.imixin.IMixinSpawnerBlockEntity;
 import com.provismet.cursedspawners.reference.CursedSpawnersLootTables;
 import com.provismet.cursedspawners.registries.CursedSpawnersRegistries;
 import com.provismet.cursedspawners.registries.SpawnerPassiveEffects;
-import com.provismet.cursedspawners.utility.CSGamerules;
+import com.provismet.cursedspawners.gamerule.CursedSpawnersGamerules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentGetter;
@@ -83,7 +83,7 @@ public abstract class SpawnerBlockEntityMixin extends BlockEntity implements IMi
     @Inject(method="serverTick", at=@At("HEAD"))
     private static void initialSetup (Level level, BlockPos pos, BlockState state, SpawnerBlockEntity entity, CallbackInfo info) {
         SpawnerBlockEntityMixin self = (SpawnerBlockEntityMixin)(Object) entity;
-        if (self != null && self.spawnerData.shouldGenerateEffects() && self.hasLevel() && level instanceof ServerLevel serverWorld && serverWorld.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE) > 0) {
+        if (self != null && self.spawnerData.shouldGenerateEffects() && self.hasLevel() && level instanceof ServerLevel serverWorld && serverWorld.getGameRules().get(CursedSpawnersGamerules.SPAWNER_ACTION_CHANCE) > 0) {
             self.generateEffects(serverWorld);
             self.setChanged();
         }
@@ -95,8 +95,8 @@ public abstract class SpawnerBlockEntityMixin extends BlockEntity implements IMi
         RandomSource random = level.getRandom();
 
         int dangerLevel = 0;
-        double chanceToAddAction = level.getGameRules().get(CSGamerules.SPAWNER_ACTION_CHANCE);
-        while (dangerLevel < level.getGameRules().get(CSGamerules.MAX_SPAWNER_ACTIONS)) {
+        double chanceToAddAction = level.getGameRules().get(CursedSpawnersGamerules.SPAWNER_ACTION_CHANCE);
+        while (dangerLevel < level.getGameRules().get(CursedSpawnersGamerules.MAX_SPAWNER_ACTIONS)) {
             if (random.nextDouble() < chanceToAddAction) ++dangerLevel;
             else break;
         }

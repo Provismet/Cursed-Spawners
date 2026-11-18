@@ -9,7 +9,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-public abstract class CSParticleTypes {
+public abstract class CursedSpawnersParticleTypes {
     public static final ParticleType<AOEChargingParticleEffect> AOE_CHARGING_INDICATOR = FabricParticleTypes.complex(AOEChargingParticleEffect.CODEC, AOEChargingParticleEffect.PACKET_CODEC);
     public static final SimpleParticleType HEAL = FabricParticleTypes.simple();
     public static final SimpleParticleType BOOST = FabricParticleTypes.simple();

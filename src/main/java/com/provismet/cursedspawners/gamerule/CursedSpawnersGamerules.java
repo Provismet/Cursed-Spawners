@@ -1,11 +1,11 @@
-package com.provismet.cursedspawners.utility;
+package com.provismet.cursedspawners.gamerule;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleBuilder;
 import net.minecraft.world.level.gamerules.GameRule;
 import net.minecraft.world.level.gamerules.GameRuleCategory;
 
-public abstract class CSGamerules {
+public abstract class CursedSpawnersGamerules {
     public static final GameRuleCategory SPAWNER_CATEGORY = new GameRuleCategory(CursedSpawnersMain.identifier("gamerule_category"));
     public static final GameRule<Double> MIMIC_CHANCE = GameRuleBuilder.forDouble(0.1).category(SPAWNER_CATEGORY).range(0.0, 1.0).buildAndRegister(CursedSpawnersMain.identifier("spawner_mimic_chance"));
     public static final GameRule<Double> BREAK_SPEED = GameRuleBuilder.forDouble(0.5).category(SPAWNER_CATEGORY).minValue(0.0).buildAndRegister(CursedSpawnersMain.identifier("spawner_mining_speed_modifier"));

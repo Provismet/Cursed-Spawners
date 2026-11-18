@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.provismet.cursedspawners.particle.effect.AOEChargingParticleEffect;
-import com.provismet.cursedspawners.registries.CSSoundEvents;
+import com.provismet.cursedspawners.registries.CursedSpawnersSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -48,7 +48,7 @@ public record KnockbackPassiveEffect (int interval, double radius, double streng
                     player.hurtMarked = true;
                 }
             }
-            level.playSound(null, spawnerPos, CSSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundSource.BLOCKS, 1, 1);
+            level.playSound(null, spawnerPos, CursedSpawnersSoundEvents.BLOCK_SPAWNER_KNOCKBACK, SoundSource.BLOCKS, 1, 1);
         }
         else if (level.getGameTime() % this.interval == this.interval / 2) {
             level.sendParticles(new AOEChargingParticleEffect(this.interval / 2, ARGB.vector3fFromRGB24(0xE2E2E2)), centrePos.x(), spawnerPos.getY() + 0.025, centrePos.z(), 1, 0, 0, 0, 0);

@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
-public abstract class CSSoundEvents {
+public abstract class CursedSpawnersSoundEvents {
     public static final SoundEvent ENTITY_MIMIC_AMBIENT = register("entity.mimic.ambient");
     public static final SoundEvent ENTITY_MIMIC_HURT = register("entity.mimic.hurt");
     public static final SoundEvent ENTITY_MIMIC_DEATH = register("entity.mimic.death");

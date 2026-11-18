@@ -1,8 +1,8 @@
 package com.provismet.cursedspawners.entity;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
-import com.provismet.cursedspawners.registries.CSEntityTypes;
-import com.provismet.cursedspawners.registries.CSSoundEvents;
+import com.provismet.cursedspawners.registries.CursedSpawnersEntityTypes;
+import com.provismet.cursedspawners.registries.CursedSpawnersSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -82,7 +82,7 @@ public class SpawnerMimicEntity extends Monster {
     private static final EntityDataAccessor<String> RENDERED_ENTITY_TYPE = SynchedEntityData.defineId(SpawnerMimicEntity.class, EntityDataSerializers.STRING);
 
     public SpawnerMimicEntity (Level world) {
-        this(CSEntityTypes.SPAWNER_MIMIC, world);
+        this(CursedSpawnersEntityTypes.SPAWNER_MIMIC, world);
     }
 
     public SpawnerMimicEntity (EntityType<? extends SpawnerMimicEntity> entityType, Level world) {
@@ -230,30 +230,30 @@ public class SpawnerMimicEntity extends Monster {
 
     @Override
     protected void playAttackSound () {
-        this.makeSound(CSSoundEvents.ENTITY_MIMIC_ATTACK);
+        this.makeSound(CursedSpawnersSoundEvents.ENTITY_MIMIC_ATTACK);
     }
 
     @Override
     @NotNull
     protected SoundEvent getAmbientSound () {
-        return CSSoundEvents.ENTITY_MIMIC_AMBIENT;
+        return CursedSpawnersSoundEvents.ENTITY_MIMIC_AMBIENT;
     }
 
     @Override
     @NotNull
     protected SoundEvent getDeathSound () {
-        return CSSoundEvents.ENTITY_MIMIC_DEATH;
+        return CursedSpawnersSoundEvents.ENTITY_MIMIC_DEATH;
     }
 
     @Override
     @NotNull
     protected SoundEvent getHurtSound (DamageSource source) {
-        return CSSoundEvents.ENTITY_MIMIC_HURT;
+        return CursedSpawnersSoundEvents.ENTITY_MIMIC_HURT;
     }
 
     @Override
     protected void playStepSound (BlockPos pos, BlockState state) {
-        this.makeSound(CSSoundEvents.ENTITY_MIMIC_STEP);
+        this.makeSound(CursedSpawnersSoundEvents.ENTITY_MIMIC_STEP);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import com.provismet.cursedspawners.entity.renderer.models.SpawnerMimicModel;
 import com.provismet.cursedspawners.entity.renderer.state.SpawnerMimicRenderState;
-import com.provismet.cursedspawners.registries.CSModelLayers;
+import com.provismet.cursedspawners.registries.CursedSpawnersModelLayers;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -19,7 +19,7 @@ public class SpawnerMimicEntityRenderer extends MobRenderer<SpawnerMimicEntity, 
     private static final Identifier TEXTURE = CursedSpawnersMain.identifier("textures/entity/spawner_mimic.png");
 
     public SpawnerMimicEntityRenderer (EntityRendererProvider.Context context) {
-        super(context, new SpawnerMimicModel(context.bakeLayer(CSModelLayers.SPAWNER_MIMIC)), 0.6f);
+        super(context, new SpawnerMimicModel(context.bakeLayer(CursedSpawnersModelLayers.SPAWNER_MIMIC)), 0.6f);
     }
 
     @Override

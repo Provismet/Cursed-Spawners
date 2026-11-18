@@ -2,7 +2,7 @@ package com.provismet.cursedspawners.action;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.provismet.cursedspawners.utility.CSGamerules;
+import com.provismet.cursedspawners.gamerule.CursedSpawnersGamerules;
 import net.minecraft.server.level.ServerLevel;
 
 public record SpawnerData (double mimicChance, boolean shouldGenerateEffects, ActionGroup actions) {
@@ -28,7 +28,7 @@ public record SpawnerData (double mimicChance, boolean shouldGenerateEffects, Ac
     }
 
     public double getEffectiveMimicChance (ServerLevel level) {
-        if (this.shouldUseGameruleMimicChance()) return level.getGameRules().get(CSGamerules.MIMIC_CHANCE);
+        if (this.shouldUseGameruleMimicChance()) return level.getGameRules().get(CursedSpawnersGamerules.MIMIC_CHANCE);
         return this.mimicChance;
     }
 }
