@@ -1,4 +1,4 @@
-package com.provismet.cursedspawners.entity;
+package com.provismet.cursedspawners.reference;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import net.minecraft.core.registries.Registries;

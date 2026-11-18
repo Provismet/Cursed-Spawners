@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.mixin;
 
-import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
+import com.provismet.cursedspawners.imixin.IMixinSpawnerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,8 +28,8 @@ public abstract class ServerPlayerInteractionManagerMixin {
         cancellable = true
     )
     private void falseBreak (BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (!this.player.isCreative() && !this.player.isSpectator() && this.level.getBlockEntity(pos) instanceof IMixinMobSpawnerBlockEntity spawnerBlockEntity) {
-            if (!spawnerBlockEntity.cursed_spawners$attemptBreak()) cir.setReturnValue(false);
+        if (!this.player.isCreative() && !this.player.isSpectator() && this.level.getBlockEntity(pos) instanceof IMixinSpawnerBlockEntity spawnerBlockEntity) {
+            if (!spawnerBlockEntity.cursed_spawners$attemptBreak(this.player)) cir.setReturnValue(false);
         }
     }
 }

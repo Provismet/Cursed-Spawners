@@ -2,16 +2,8 @@ package com.provismet.cursedspawners.mixin;
 
 import com.provismet.cursedspawners.CursedSpawnersMain;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
-import com.provismet.cursedspawners.imixin.IMixinMobSpawnerBlockEntity;
 import com.provismet.cursedspawners.networking.ClientPacketReceiver;
 import com.provismet.cursedspawners.utility.CSGamerules;
-import net.minecraft.world.phys.Vec3;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +20,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.UUID;
 
 @Mixin(SpawnerBlock.class)
 public abstract class SpawnerBlockMixin extends BaseEntityBlock {
@@ -40,13 +39,8 @@ public abstract class SpawnerBlockMixin extends BaseEntityBlock {
         state = super.playerWillDestroy(world, pos, state, player);
         if (player.isCreative() || !(world instanceof ServerLevel serverWorld)) return state;
 
-        double worldMimicChance = serverWorld.getGameRules().get(CSGamerules.MIMIC_CHANCE);
-        if (worldMimicChance >= 0 && world.getBlockEntity(pos) instanceof SpawnerBlockEntity blockEntity) {
-            double blockMimicChance;
-            if (((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$useWorldMimicChance()) blockMimicChance = worldMimicChance;
-            else blockMimicChance = ((IMixinMobSpawnerBlockEntity)blockEntity).cursed_spawners$getMimicChance();
-
-            if (world.getRandom().nextDouble() <= blockMimicChance) {
+        if (world.getBlockEntity(pos) instanceof SpawnerBlockEntity blockEntity) {
+            if (world.getRandom().nextDouble() <= blockEntity.cursed_spawners$getSpawnerData().getEffectiveMimicChance(serverWorld)) {
                 CompoundTag nbt = blockEntity.saveWithFullMetadata(world.registryAccess()).copy();
                 SpawnerMimicEntity mimic = new SpawnerMimicEntity(world);
                 UUID uuid = mimic.getUUID();

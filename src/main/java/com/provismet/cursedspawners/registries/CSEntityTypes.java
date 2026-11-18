@@ -1,13 +1,10 @@
 package com.provismet.cursedspawners.registries;
 
-import com.provismet.cursedspawners.CursedSpawnersMain;
-import com.provismet.cursedspawners.entity.CursedSpawnedEntityTypeIds;
+import com.provismet.cursedspawners.reference.CursedSpawnedEntityTypeIds;
 import com.provismet.cursedspawners.entity.SpawnerMimicEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

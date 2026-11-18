@@ -6,6 +6,8 @@ import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.level.gamerules.GameRule;
+
 import java.util.concurrent.CompletableFuture;
 
 public class LanguageGenerator extends FabricLanguageProvider {
@@ -16,12 +18,10 @@ public class LanguageGenerator extends FabricLanguageProvider {
     @Override
     public void generateTranslations (HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add("gamerule.category.cursed-spawners", "Cursed Spawners");
-        translationBuilder.add(CSGamerules.MIMIC_CHANCE.getDescriptionId(), "Mimic Chance");
-        translationBuilder.add(CSGamerules.MIMIC_CHANCE.getDescriptionId() + ".description", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
-        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getDescriptionId(), "Bonus Action Chance");
-        translationBuilder.add(CSGamerules.SPAWNER_ACTION_CHANCE.getDescriptionId() + ".description", "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.");
-        translationBuilder.add(CSGamerules.BREAK_SPEED.getDescriptionId(), "Mining Speed Modifier");
-        translationBuilder.add(CSGamerules.BREAK_SPEED.getDescriptionId() + ".description", "Mining speed for spawners is multiplied by this value.");
+        this.gamerule(translationBuilder, CSGamerules.MIMIC_CHANCE, "Mimic Chance", "The base odds of a Spawner becoming a mimic when broken. Overridden by NBT data when applicable.");
+        this.gamerule(translationBuilder, CSGamerules.SPAWNER_ACTION_CHANCE, "Bonus Action Chance", "The probability of a spawner having an addition effect. Effects can stack. Spawners will not attempt to generate actions if this is zero.");
+        this.gamerule(translationBuilder, CSGamerules.MAX_SPAWNER_ACTIONS, "Maximum Actions", "Spawners can have up to this many bonus actions.");
+        this.gamerule(translationBuilder, CSGamerules.BREAK_SPEED, "Mining Speed Modifier", "Mining speed for spawners is multiplied by this value.");
 
         translationBuilder.add(CSEntityTypes.SPAWNER_MIMIC, "Spawner Mimic");
 
@@ -36,5 +36,10 @@ public class LanguageGenerator extends FabricLanguageProvider {
         translationBuilder.add("subtitles.block.spawner.knockback", "Spawner bursts");
         translationBuilder.add("subtitles.block.spawner.heal", "Spawner heals");
         translationBuilder.add("subtitles.block.spawner.boost", "Spawner accelerates");
+    }
+
+    private void gamerule (TranslationBuilder translationBuilder, GameRule<?> gameRule, String name, String description) {
+        translationBuilder.add(gameRule.getDescriptionId(), name);
+        translationBuilder.add(gameRule.getDescriptionId() + ".description", description);
     }
 }

@@ -1,6 +1,6 @@
 package com.provismet.cursedspawners.datagen;
 
-import com.provismet.cursedspawners.entity.CursedSpawnedEntityTypeIds;
+import com.provismet.cursedspawners.reference.CursedSpawnedEntityTypeIds;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;

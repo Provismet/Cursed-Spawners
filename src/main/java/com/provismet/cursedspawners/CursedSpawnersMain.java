@@ -6,6 +6,8 @@ import com.provismet.cursedspawners.registries.CSItemGroups;
 import com.provismet.cursedspawners.registries.CSItems;
 import com.provismet.cursedspawners.registries.CSParticleTypes;
 import com.provismet.cursedspawners.registries.CSSoundEvents;
+import com.provismet.cursedspawners.registries.SpawnerBreakEffects;
+import com.provismet.cursedspawners.registries.SpawnerPassiveEffects;
 import com.provismet.cursedspawners.utility.CSGamerules;
 import net.fabricmc.api.ModInitializer;
 
@@ -28,6 +30,8 @@ public class CursedSpawnersMain implements ModInitializer {
 		CSGamerules.init();
 		CSItems.init();
 		CSSoundEvents.init();
+		SpawnerBreakEffects.init();
+		SpawnerPassiveEffects.bootstrap();
 		CSEntityTypes.register();
 		CSParticleTypes.register();
 		CSItemGroups.register();

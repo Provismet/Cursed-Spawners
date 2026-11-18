@@ -9,6 +9,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3fc;
 
 public record AOEChargingParticleEffect (int maxAge, Vector3fc colour) implements ParticleOptions {
@@ -28,6 +29,7 @@ public record AOEChargingParticleEffect (int maxAge, Vector3fc colour) implement
     );
 
     @Override
+    @NotNull
     public ParticleType<AOEChargingParticleEffect> getType () {
         return CSParticleTypes.AOE_CHARGING_INDICATOR;
     }
